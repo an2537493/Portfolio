@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Lucide 图标库 -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- 引入 FontAwesome 图标库 (用于内嵌真实的交互反馈页 UI) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ---------------- 全局与基础样式 ---------------- */
         body, html {
@@ -22,7 +24,7 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #E2E8F0; border-radius: 4px; }
 
-        /* 返回上一级按钮 (毛玻璃样式，与总结与复盘一致) */
+        /* 返回上一级按钮 */
         .back-btn {
             position: fixed; top: 24px; left: 32px; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
@@ -37,7 +39,7 @@
         .back-btn:hover { color: #1677FF; border-color: #1677FF; background: #E6F4FF; }
         .back-btn:hover svg { transform: translateX(-3px); }
 
-        /* 顶部全局导航栏 (简约风格 B端蓝) */
+        /* 顶部全局导航栏 */
         .global-top-nav {
             position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
             z-index: 2000; display: flex; align-items: center; gap: 4px;
@@ -118,25 +120,61 @@
             z-index: 0; opacity: 0.04; background-color: #1677FF; pointer-events: none;
         }
 
-        /* 干净的图片占位骨架屏 (移除了文字) */
+        /* 干净的图片占位骨架屏 */
         .img-placeholder {
             position: absolute; inset: 0; background: #F8FAFC; border: 1px dashed #E2E8F0;
             border-radius: 12px; display: flex; flex-direction: column; align-items: center; 
             justify-content: center; z-index: -1;
         }
 
+        /* ---------------- 预览区内嵌真实 HTML 组件样式 (发货结果异常页) ---------------- */
+        .app-preview-wrap {
+            --primary-color: #1677ff;
+            --error-color: #ff4d4f;
+            --error-bg: #fff2f0;
+            --error-border: #ffccc7;
+            color: #1f2937;
+        }
+        
+        /* 成功页适配缩放 */
+        .app-preview-wrap .info-box { background: #fafafa; border-radius: 8px; padding: 16px; display: flex; justify-content: space-around; text-align: left; margin: 20px auto; width: 100%; max-width: 500px; border: 1px solid #f0f0f0; }
+        .app-preview-wrap .info-item { display: flex; flex-direction: column; gap: 6px; }
+        
+        /* 异常列表适配缩放 */
+        .app-preview-wrap .ui-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .app-preview-wrap .ui-table th, .app-preview-wrap .ui-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+        .app-preview-wrap .ui-table th { background: #fafafa; color: #4b5563; font-weight: 500; }
+        .app-preview-wrap .ui-table tr:hover td { background: #fcfcfc; }
+        .app-preview-wrap .order-id { color: var(--primary-color); font-family: monospace; font-size: 12px; cursor: pointer; }
+        .app-preview-wrap .order-id:hover { text-decoration: underline; }
+        .app-preview-wrap .prod-thumb { width: 32px; height: 32px; background: #f0f2f5; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #8c8c8c; border: 1px solid #d9d9d9; flex-shrink: 0; }
+        .app-preview-wrap .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 11px; }
+        .app-preview-wrap .badge.error { background: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-color); }
+        .app-preview-wrap .action-links a { color: var(--primary-color); text-decoration: none; margin-right: 10px; font-size: 12px; }
+        .app-preview-wrap .action-links a:hover { text-decoration: underline; }
+        
+        /* 下拉菜单适配 */
+        .app-preview-wrap .dropdown { position: relative; display: inline-block; }
+        .app-preview-wrap .dropdown-trigger { color: var(--primary-color); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; margin-right: 0 !important; }
+        .app-preview-wrap .dropdown-trigger i { transition: transform 0.2s; }
+        .app-preview-wrap .dropdown:hover .dropdown-trigger i { transform: rotate(180deg); }
+        .app-preview-wrap .dropdown-menu { display: none; position: absolute; right: 0; top: 100%; background-color: #fff; min-width: 90px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 6px; z-index: 100; padding: 4px 0; border: 1px solid #e5e7eb; margin-top: 4px; }
+        .app-preview-wrap .dropdown:hover .dropdown-menu { display: block; }
+        .app-preview-wrap .dropdown-item { display: block; padding: 8px 12px; color: #1f2937 !important; text-decoration: none !important; font-size: 11px; transition: all 0.2s; }
+        .app-preview-wrap .dropdown-item:hover { background-color: #f5f5f5; color: var(--primary-color) !important; }
+
     </style>
 </head>
 <body>
 
-    <!-- 全局返回键 (带锚点跳转，使用原生SVG图标) -->
+    <!-- 全局返回键 -->
     <a href="index.html#page-5-expanded" class="back-btn" title="返回首页交互大屏">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="m15 18-6-6 6-6"/>
         </svg>
     </a>
 
-    <!-- 顶部全局导航栏 (核心业务页) -->
+    <!-- 顶部全局导航栏 -->
     <nav class="global-top-nav">
         <a href="b-project-background.html" class="nav-item">项目背景</a>
         <a href="b-core-process.html" class="nav-item active">核心业务</a>
@@ -172,7 +210,6 @@
                 </header>
 
                 <main class="flex-1 min-h-0 w-full flex flex-col items-center justify-center relative pb-10">
-                    
                     <!-- 根节点 -->
                     <div class="shrink-0 bg-blue-600 text-white font-bold text-lg py-3 px-12 rounded-full shadow-[0_8px_20px_rgba(37,99,235,0.25)] z-20 reveal delay-100 transition-transform hover:scale-105">
                         B端电商管理系统
@@ -288,16 +325,102 @@
             </div>
         </section>
 
-        <!-- ==================== Page 3: 导航降噪减轻认知负担 ==================== -->
+        <!-- ==================== Page 3: 待发货订单列表页 (原流程闭环) ==================== -->
         <section class="portfolio-section" data-index="2">
+            <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
+                <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
+                    <div>
+                        <div class="flex items-center gap-3 mb-1.5">
+                            <div class="w-1.5 h-8 md:h-10 bg-[#1677FF] rounded-sm shadow-sm"></div>
+                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">待发货订单列表页</h1>
+                        </div>
+                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Step 1: Pending Shipment Order List</p>
+                    </div>
+                    <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-[0_4px_20px_rgba(22,119,255,0.06)]">
+                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium transition-colors group-hover:text-blue-400">屏效空间提升</span>
+                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block transition-transform duration-300 group-hover:scale-105 group-hover:origin-right">首屏释放 +40%</span>
+                    </div>
+                </header>
+
+                <div class="flex-1 min-h-0 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 xl:gap-12 reveal delay-200">
+                    <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-50/50">
+                        <div id="img-order-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
+                            <div class="img-placeholder"></div>
+                            <img src="image/order-original.png" alt="原始设计" class="magnifiable-image w-full h-full object-contain object-top p-2 md:p-6 cursor-zoom-in" onerror="this.style.opacity='0'">
+                        </div>
+                        <div id="img-order-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
+                            <div class="img-placeholder"></div>
+                            <img src="image/order-optimized.png" alt="优化方案" class="magnifiable-image w-full h-full object-contain object-top p-2 md:p-6 cursor-zoom-in" onerror="this.style.opacity='0'">
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-[50%] flex flex-col relative h-full">
+                        <div class="bg-white p-1.5 rounded-xl inline-flex self-start mb-8 shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-slate-100 z-30 relative">
+                            <button id="btn-order-orig" onclick="toggleView('order', 'original')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold bg-slate-100 text-slate-800 shadow-sm border border-slate-100 transition-all duration-300 flex items-center relative">
+                                <span id="dot-order-orig" class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 mr-3 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>原有痛点 (Original)
+                            </button>
+                            <button id="btn-order-opt" onclick="toggleView('order', 'optimized')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent transition-all duration-300 flex items-center relative">
+                                <span id="dot-order-opt" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300 mr-3"></span>优化解法 (Optimized)
+                            </button>
+                        </div>
+
+                        <div class="flex-1 relative w-full">
+                            <div id="text-order-orig" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-20 pointer-events-auto">
+                                <div class="mb-6 xl:mb-8">
+                                    <h2 class="text-[24px] xl:text-[28px] font-bold text-slate-800 mb-3">堆砌式筛选与拥挤列表</h2>
+                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">所有筛选条件默认平铺，占用首屏大量空间。</p>
+                                </div>
+                                <div class="flex flex-col gap-4 w-full">
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
+                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="maximize" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">首屏利用率低：筛选区平铺占屏40%</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">表单化的长条件筛选模块挤占了过多的首屏高度，导致下方核心的订单数据列表区域被严重压缩，需频繁滚动。</span></div>
+                                    </div>
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
+                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="search" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">筛选效率低下：单一维度下拉查找</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">缺乏组合维度的快捷入口，客服在处理高频场景（如“待发货”、“退款中”）时，每次都要在下拉框内反复翻找。</span></div>
+                                    </div>
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
+                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="align-justify" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">列表信息拥挤：文字堆砌缺乏视觉重点</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">订单内的文本信息缺乏字重和颜色区分，难以在密集的待办记录中快速聚焦并定位到关键的异常订单状态。</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="text-order-opt" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-10 pointer-events-none">
+                                <div class="mb-6 xl:mb-8">
+                                    <h2 class="text-[24px] xl:text-[28px] font-bold text-[#1677FF] mb-3">页签导航与组合筛选</h2>
+                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">采用 Tab页签 切换高频状态，低频筛选折叠，释放空间。</p>
+                                </div>
+                                <div class="flex flex-col gap-4 w-full">
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
+                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="folder" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">高频状态采用Tab页签一键切换</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">将最高频的业务流转节点（如“待发货”、“已发货”等）提取为顶部的视图 Tab，实现核心场景一键触达。</span></div>
+                                    </div>
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
+                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="minimize-2" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">折叠低频筛选释放空间</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">将次要维度的组合搜索条件默认收起隐藏，将首屏宝贵的视窗面积归还给重要的业务列表与订单明细展示。</span></div>
+                                    </div>
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
+                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="tag" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">关键状态标签化清晰易读</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">重构列表视觉层级，对订单的履约及支付状态使用差异化色彩标签标定，有效减轻客服人员长期盯盘的视觉负担。</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== Page 4: 侧拉菜单栏 (原导航降噪) ==================== -->
+        <section class="portfolio-section" data-index="3">
             <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
                 <header class="w-full max-w-[1400px] mx-auto shrink-0 reveal delay-100 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 relative z-10">
                     <div>
                         <div class="flex items-center gap-3 mb-1.5">
                             <div class="w-1.5 h-8 md:h-9 bg-[#1677ff] rounded-sm"></div>
-                            <h1 class="text-3xl md:text-4xl font-bold text-[#0f172a] tracking-tight">导航降噪减轻认知负担</h1>
+                            <h1 class="text-3xl md:text-4xl font-bold text-[#0f172a] tracking-tight">侧拉菜单栏</h1>
                         </div>
-                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Reduce Visual Noise to Ease Cognitive Load</p>
+                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Step 2: Side Drawer Menu</p>
                     </div>
                     <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">
                         <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium">寻找效率提升</span>
@@ -311,7 +434,7 @@
                     <div id="cont-nav-orig" class="hidden lg:block w-[240px] xl:w-[280px] shrink-0 h-full relative rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-200/60 bg-white transition-all duration-700 ease-in-out z-20 scale-100 opacity-100">
                         <div id="over-nav-orig" class="absolute inset-0 bg-slate-900/5 transition-opacity duration-700 opacity-0 z-30 pointer-events-none"></div>
                         <div class="img-placeholder"></div>
-                        <img src="./image/nav-orig.png" alt="原始设计" class="absolute inset-0 w-full h-full object-cover object-top z-10" onerror="this.style.opacity='0'">
+                        <img src="./image/nav-orig.png" alt="原始设计" class="magnifiable-image absolute inset-0 w-full h-full object-cover object-top z-10 cursor-zoom-in" onerror="this.style.opacity='0'">
                     </div>
 
                     <!-- 中间：交互与文案区 -->
@@ -376,96 +499,94 @@
                     <div id="cont-nav-opt" class="hidden lg:block w-[240px] xl:w-[280px] shrink-0 h-full relative rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.05)] border border-slate-200/60 bg-white transition-all duration-700 ease-in-out scale-95 opacity-50 z-10 pointer-events-none">
                         <div id="over-nav-opt" class="absolute inset-0 bg-slate-900/5 transition-opacity duration-700 opacity-100 z-30 pointer-events-none"></div>
                         <div class="img-placeholder"></div>
-                        <img src="./image/nav-opt.png" alt="优化方案" class="absolute inset-0 w-full h-full object-cover object-top z-10" onerror="this.style.opacity='0'">
+                        <img src="./image/nav-opt.png" alt="优化方案" class="magnifiable-image absolute inset-0 w-full h-full object-cover object-top z-10 cursor-zoom-in" onerror="this.style.opacity='0'">
                     </div>
 
                 </div>
             </div>
         </section>
 
-        <!-- ==================== Page 4: 工作台数据看板优化 ==================== -->
-        <section class="portfolio-section" data-index="3">
+        <!-- ==================== Page 5: 发货操作台 (原物流模板优化) ==================== -->
+        <section class="portfolio-section" data-index="4">
             <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
                 
                 <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
                     <div>
                         <div class="flex items-center gap-3 mb-1.5">
                             <div class="w-1.5 h-8 md:h-9 bg-[#1677FF] rounded-sm"></div>
-                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">工作台数据看板优化</h1>
+                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">发货操作台</h1>
                         </div>
-                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Workbench Dashboard Optimization & Refactoring</p>
+                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Step 3: Fulfillment Console</p>
                     </div>
                     <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">
-                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium">工作效率提升</span>
-                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block">专注度 +100%</span>
+                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium">配置效率提升</span>
+                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block">耗时 -60%</span>
                     </div>
                 </header>
 
                 <div class="flex-1 min-h-0 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 xl:gap-12 reveal delay-200">
                     
-                    <!-- 左侧：图片展示区 -->
-                    <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-50/50">
-                        <div id="img-work-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
+                    <div class="w-full lg:w-[45%] xl:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-50/50">
+                        <div id="img-log-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
                             <div class="img-placeholder"></div>
-                            <img src="./image/work-orig.png" alt="原始设计" class="w-full h-full object-contain object-top p-6 transition-transform duration-500 hover:scale-105 origin-top relative z-10" onerror="this.style.opacity='0'">
+                            <img src="./image/log-orig.png" alt="原始设计" class="magnifiable-image w-full h-full object-contain object-top p-6 relative z-10 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
-                        <div id="img-work-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
+                        <div id="img-log-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
                             <div class="img-placeholder"></div>
-                            <img src="./image/work-opt.png" alt="优化方案" class="w-full h-full object-contain object-top p-6 transition-transform duration-500 hover:scale-105 origin-top relative z-10" onerror="this.style.opacity='0'">
+                            <img src="./image/log-opt.png" alt="优化方案" class="magnifiable-image w-full h-full object-contain object-top p-6 relative z-10 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                     </div>
 
-                    <!-- 右侧：交互控制与文案区 -->
-                    <div class="w-full lg:w-[50%] flex flex-col relative h-full">
+                    <div class="w-full lg:w-[55%] xl:w-[50%] flex flex-col relative h-full">
                         <div class="bg-white p-1.5 rounded-xl inline-flex self-start mb-8 shadow-sm border border-slate-100 z-30 relative">
-                            <button id="btn-work-orig" onclick="toggleView('work', 'original')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold bg-slate-100 text-slate-800 shadow-sm border border-slate-100 transition-all duration-300 flex items-center relative">
-                                <span id="dot-work-orig" class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 mr-3 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>原有痛点 (Original)
+                            <button id="btn-log-orig" onclick="toggleView('log', 'original')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold bg-slate-100 text-slate-800 shadow-sm border border-slate-100 transition-all duration-300 flex items-center relative">
+                                <span id="dot-log-orig" class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 mr-3 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>原有痛点 (Original)
                             </button>
-                            <button id="btn-work-opt" onclick="toggleView('work', 'optimized')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent transition-all duration-300 flex items-center relative">
-                                <span id="dot-work-opt" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300 mr-3"></span>优化解法 (Optimized)
+                            <button id="btn-log-opt" onclick="toggleView('log', 'optimized')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent transition-all duration-300 flex items-center relative">
+                                <span id="dot-log-opt" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300 mr-3"></span>优化解法 (Optimized)
                             </button>
                         </div>
 
                         <div class="flex-1 relative w-full">
                             <!-- 痛点 -->
-                            <div id="text-work-orig" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-20 pointer-events-auto">
+                            <div id="text-log-orig" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-20 pointer-events-auto">
                                 <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-2xl xl:text-[28px] font-bold text-slate-800 mb-3">数据堆砌与信息过载</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">旧版工作台所有模块平铺展示，没有基于用户角色进行场景区分，导致关键任务被海量报表淹没。</p>
+                                    <h2 class="text-2xl xl:text-[28px] font-bold text-slate-800 mb-3">繁琐且易错的发货配置</h2>
+                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">旧版系统采用单选框平铺展示全国省市，不仅操作链路极长，而且极易造成发货规则的遗漏与资损。</p>
                                 </div>
                                 <div class="flex flex-col gap-4 w-full">
                                     <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-sm hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="layout-list" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">布局平铺无重点</span><span class="text-[13px] text-slate-500 leading-relaxed">报表、公告、图表等模块权重完全一致，缺乏视觉层级，无法迅速聚焦业务核心。</span></div>
+                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="mouse-pointer-click" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">操作极其繁琐</span><span class="text-[13px] text-slate-500 leading-relaxed">进行发货规则配置时，需要逐一寻找并点击对应省市，<strong class="text-red-500 font-semibold">单次配置点击数高达 30+ 次</strong>。</span></div>
                                     </div>
                                     <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-sm hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="user-x" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">缺乏角色场景</span><span class="text-[13px] text-slate-500 leading-relaxed">千人一面的通用看板模式，未能根据不同岗位动态区分展示内容。</span></div>
+                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="alert-circle" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">视图缺乏归纳</span><span class="text-[13px] text-slate-500 leading-relaxed">所有省份与规则平铺展示，无法直观地查阅“哪些地区已经配置了特定运费或限制”，排查困难。</span></div>
                                     </div>
                                     <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-sm hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="bell-off" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">关键待办被淹没</span><span class="text-[13px] text-slate-500 leading-relaxed">高优先级的审批和异常处理任务未能置顶凸显，极易被忽略。</span></div>
+                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">极易造成资损</span><span class="text-[13px] text-slate-500 leading-relaxed">由于缺乏系统校验，极容易漏选偏远地区（如新疆、西藏），导致商家承担高昂的包邮运费。</span></div>
                                     </div>
                                 </div>
                             </div>
                             <!-- 解法 -->
-                            <div id="text-work-opt" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-10 pointer-events-none">
+                            <div id="text-log-opt" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-10 pointer-events-none">
                                 <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-2xl xl:text-[28px] font-bold text-[#1677FF] mb-3">行动导向的智能工作台</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">通过“指标先行、待办居中”的策略，重构工作台布局，打造以促发用户行动为核心的智能枢纽。</p>
+                                    <h2 class="text-2xl xl:text-[28px] font-bold text-[#1677FF] mb-3">可视化分区与智能计费</h2>
+                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">通过重构信息架构，引入区域分组和表格化展示，彻底解决配置难、查错难的问题。</p>
                                 </div>
                                 <div class="flex flex-col gap-4 w-full">
                                     <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">核心业务数据置顶</span><span class="text-[13px] text-slate-600 leading-relaxed">顶部提炼今日关键指标，配合清晰的环比趋势，帮助用户秒级掌握全局业务健康度。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="list-todo" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">强化待办卡片行动力</span><span class="text-[13px] text-slate-600 leading-relaxed">将“我的待办”模块卡片化并放大层级，按紧急程度排序，专注度大幅提升。</span></div>
+                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">批量分组配置 (效率 +60%)</span><span class="text-[13px] text-slate-600 leading-relaxed">引入“大区级”分组标签，支持一键勾选华东、西北等大区，操作缩减至几步。</span></div>
                                     </div>
                                     <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
                                         <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">高频快捷入口收纳</span><span class="text-[13px] text-slate-600 leading-relaxed">梳理不同岗位的高频操作场景，提供可自定义的快捷功能矩阵。</span></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">表格化清晰展示</span><span class="text-[13px] text-slate-600 leading-relaxed">采用表格形式精准对齐“发货区域”与“对应规则”，所见即所得。</span></div>
+                                    </div>
+                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
+                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
+                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">闭环的防呆机制</span><span class="text-[13px] text-slate-600 leading-relaxed">系统自动归集未被指定的地区落入“默认规则”，杜绝漏选造成的风险与资损。</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -475,8 +596,272 @@
             </div>
         </section>
 
-        <!-- ==================== Page 5: 录入提效告别机械重复 ==================== -->
-        <section class="portfolio-section" data-index="4">
+        <!-- ==================== Page 6: 发货结果与异常反馈页 (全新排版) ==================== -->
+        <section class="portfolio-section" data-index="5">
+            <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
+                <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 xl:mb-10 reveal delay-100">
+                    <div>
+                        <div class="flex items-center gap-3 mb-1.5">
+                            <div class="w-1.5 h-8 md:h-10 bg-[#1677FF] rounded-sm shadow-sm"></div>
+                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">发货结果与异常反馈页</h1>
+                        </div>
+                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Step 4: Fulfillment Result & Exception Handling</p>
+                    </div>
+                    <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-[0_4px_20px_rgba(22,119,255,0.06)]">
+                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium transition-colors group-hover:text-blue-400">处理效率提升</span>
+                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block transition-transform duration-300 group-hover:scale-105 group-hover:origin-right">异常修复 +90%</span>
+                    </div>
+                </header>
+
+                <div class="flex-1 min-h-0 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 xl:gap-14 reveal delay-200 items-center justify-center">
+                    
+                    <!-- 左侧：视觉展示区 (真实的 HTML 代码渲染，免滚动) -->
+                    <div class="w-full lg:w-[60%] xl:w-[65%] h-[480px] xl:h-[560px] relative">
+                         <div class="absolute inset-0 bg-white rounded-2xl border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col">
+                              <!-- Mac OS 浏览器头部 -->
+                              <div class="h-10 bg-[#f4f6f8] border-b border-slate-200 flex items-center px-4 gap-2 shrink-0">
+                                  <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                                  <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                                  <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                                  <div class="flex-1 flex justify-center">
+                                      <div class="bg-white px-3 py-1 rounded-md text-[11px] text-slate-400 border border-slate-200 flex items-center gap-1.5"><i data-lucide="lock" class="w-3 h-3"></i> inno-erp.com/shipping/result</div>
+                                  </div>
+                              </div>
+                              
+                              <!-- 沉浸式内容区 -->
+                              <div class="flex-1 relative bg-[#f4f6f8] p-4 lg:p-6 overflow-hidden">
+                                   <!-- 1. 成功页视图 -->
+                                   <div id="img-fb-success" class="absolute inset-4 lg:inset-6 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden app-preview-wrap p-6 lg:p-10 transition-all duration-700 ease-in-out opacity-100 scale-100 origin-top flex flex-col z-20">
+                                        <div class="text-center pt-4 xl:pt-8 flex flex-col items-center justify-center h-full">
+                                            <i class="fa-solid fa-circle-check text-[60px] text-[#52c41a] mb-5"></i>
+                                            <h2 class="text-xl font-semibold mb-3 text-slate-800">批量发货操作完成</h2>
+                                            <p class="text-[12px] text-slate-500 mb-6 leading-relaxed max-w-[500px] mx-auto">
+                                                成功发货 <strong class="text-slate-800 font-semibold text-[13px] mx-1">120</strong> 单。系统已自动扣减对应商品库存，并流转至“待收货”状态，物流运单号已同步至各电商平台买家端。
+                                            </p>
+                                            <div class="info-box">
+                                                <div class="info-item">
+                                                    <span class="text-[11px] text-slate-500">操作流水号</span>
+                                                    <span class="text-[12px] font-medium text-slate-800">TX-20260306-0892</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="text-[11px] text-slate-500">物流匹配概况</span>
+                                                    <span class="text-[12px] font-medium text-slate-800">顺丰速运(85单)、中通快递(35单)</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <span class="text-[11px] text-slate-500">操作时间</span>
+                                                    <span class="text-[12px] font-medium text-slate-800">2026-03-06 15:10:00</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-center gap-3">
+                                                <button class="px-4 py-2 bg-[#1677ff] hover:bg-[#4096ff] text-white rounded font-medium text-[12px] transition-colors flex items-center gap-1.5"><i class="fa-solid fa-print"></i> 打印发货单与面单</button>
+                                                <button class="px-4 py-2 bg-white border border-[#d9d9d9] hover:border-[#1677ff] hover:text-[#1677ff] text-slate-700 rounded font-medium text-[12px] transition-colors">返回待发货列表</button>
+                                            </div>
+                                        </div>
+                                   </div>
+                                   
+                                   <!-- 2. 异常页视图 (布局压缩调整避免滚动) -->
+                                   <div id="img-fb-exception" class="absolute inset-4 lg:inset-6 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden app-preview-wrap p-4 xl:p-6 transition-all duration-700 ease-in-out opacity-0 scale-95 translate-y-4 pointer-events-none origin-top flex flex-col z-10">
+                                        <div class="flex items-start gap-4 mb-4 pb-4 border-b border-[#e5e7eb]">
+                                            <i class="fa-solid fa-circle-exclamation text-4xl text-[#faad14] mt-0.5"></i>
+                                            <div>
+                                                <h2 class="text-[16px] font-bold text-slate-800 mb-1.5">批量发货完成，部分订单存在异常</h2>
+                                                <p class="text-[12px] text-slate-500 mb-0 leading-snug">
+                                                    本次共处理 119 单，成功 <strong class="text-slate-800">115</strong> 单。以下 <strong class="text-slate-800">4</strong> 单因风控或库存规则被拦截。<br>请处理异常后重新提交发货，避免漏发。
+                                                </p>
+                                            </div>
+                                            <div class="ml-auto flex gap-2 shrink-0 pt-2">
+                                                <button class="px-3 py-1.5 bg-[#1677ff] hover:bg-[#4096ff] text-white rounded font-medium text-[12px] transition-colors">重新校验并提交</button>
+                                                <button class="px-3 py-1.5 bg-white border border-[#d9d9d9] hover:border-[#1677ff] hover:text-[#1677ff] text-slate-700 rounded font-medium text-[12px] transition-colors">返回列表</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full flex-1 overflow-hidden">
+                                            <table class="ui-table w-full">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="14%">订单编号</th>
+                                                        <th width="24%">商品明细</th>
+                                                        <th width="20%">收件人信息</th>
+                                                        <th width="26%">异常拦截原因</th>
+                                                        <th width="16%">操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- 异常单 1 -->
+                                                    <tr>
+                                                        <td><span class="order-id">ORD-8801</span></td>
+                                                        <td>
+                                                            <div class="flex items-center gap-2.5">
+                                                                <div class="prod-thumb"><i class="fa-solid fa-chair"></i></div>
+                                                                <div class="flex flex-col">
+                                                                    <span class="font-medium text-[12px] mb-0.5">极简办公椅</span>
+                                                                    <span class="text-[11px] text-slate-500">黑色 / 标准版 × 2</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="flex flex-col gap-0.5">
+                                                                <span class="font-medium text-[12px]">张经理 &nbsp; 138****0000</span>
+                                                                <span class="text-[11px] text-slate-500 truncate w-[130px] xl:w-[160px] inline-block" title="浙江省杭州市西湖区文一西路...">浙江省杭州市西湖区...</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge error"><i class="fa-solid fa-location-dot"></i> 收件地址缺少门牌号</span>
+                                                        </td>
+                                                        <td class="action-links whitespace-nowrap">
+                                                            <a href="#">修改地址</a>
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-trigger">更多 <i class="fa-solid fa-angle-down text-[10px]"></i></a>
+                                                                <div class="dropdown-menu">
+                                                                    <a href="#" class="dropdown-item">拆单发货</a>
+                                                                    <a href="#" class="dropdown-item">更换物流</a>
+                                                                    <a href="#" class="dropdown-item">挂起订单</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- 异常单 2 -->
+                                                    <tr>
+                                                        <td><span class="order-id">ORD-8802</span></td>
+                                                        <td>
+                                                            <div class="flex items-center gap-2.5">
+                                                                <div class="prod-thumb"><i class="fa-solid fa-mouse"></i></div>
+                                                                <div class="flex flex-col">
+                                                                    <span class="font-medium text-[12px] mb-0.5">人体工学鼠标</span>
+                                                                    <span class="text-[11px] text-slate-500">月光白 / 蓝牙版 × 1</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="flex flex-col gap-0.5">
+                                                                <span class="font-medium text-[12px]">李先生 &nbsp; 139****1111</span>
+                                                                <span class="text-[11px] text-slate-500 truncate w-[130px] xl:w-[160px] inline-block" title="上海市浦东新区张江高科技园...">上海市浦东新区张江...</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge error"><i class="fa-solid fa-boxes-stacked"></i> 对应SKU可用库存不足</span>
+                                                        </td>
+                                                        <td class="action-links whitespace-nowrap">
+                                                            <a href="#">拆单发货</a>
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-trigger">更多 <i class="fa-solid fa-angle-down text-[10px]"></i></a>
+                                                                <div class="dropdown-menu">
+                                                                    <a href="#" class="dropdown-item">快捷补货</a>
+                                                                    <a href="#" class="dropdown-item">联系买家</a>
+                                                                    <a href="#" class="dropdown-item">挂起订单</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- 异常单 3 -->
+                                                    <tr>
+                                                        <td><span class="order-id">ORD-8803</span></td>
+                                                        <td>
+                                                            <div class="flex items-center gap-2.5">
+                                                                <div class="prod-thumb"><i class="fa-solid fa-display"></i></div>
+                                                                <div class="flex flex-col">
+                                                                    <span class="font-medium text-[12px] mb-0.5">升降办公桌 Pro</span>
+                                                                    <span class="text-[11px] text-slate-500">1.4米 / 胡桃木 × 1</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="flex flex-col gap-0.5">
+                                                                <span class="font-medium text-[12px]">王女士 &nbsp; 137****2222</span>
+                                                                <span class="text-[11px] text-slate-500 truncate w-[130px] xl:w-[160px] inline-block" title="广东省广州市天河区珠江新城...">广东省广州市天河区...</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge error"><i class="fa-solid fa-hand-holding-dollar"></i> 买家已发起退款拦截</span>
+                                                        </td>
+                                                        <td class="action-links whitespace-nowrap">
+                                                            <a href="#" style="color:var(--error-color)">处理售后</a>
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-trigger">更多 <i class="fa-solid fa-angle-down text-[10px]"></i></a>
+                                                                <div class="dropdown-menu">
+                                                                    <a href="#" class="dropdown-item">拆单发货</a>
+                                                                    <a href="#" class="dropdown-item">联系买家</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- 异常单 4 -->
+                                                    <tr>
+                                                        <td><span class="order-id">ORD-8804</span></td>
+                                                        <td>
+                                                            <div class="flex items-center gap-2.5">
+                                                                <div class="prod-thumb"><i class="fa-solid fa-box-open"></i></div>
+                                                                <div class="flex flex-col">
+                                                                    <span class="font-medium text-[12px] mb-0.5">护腰靠垫套装</span>
+                                                                    <span class="text-[11px] text-slate-500">太空灰 × 5</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="flex flex-col gap-0.5">
+                                                                <span class="font-medium text-[12px]">赵总 &nbsp; 136****3333</span>
+                                                                <span class="text-[11px] text-slate-500 truncate w-[130px] xl:w-[160px] inline-block" title="新疆维吾尔自治区乌鲁木齐市...">新疆维吾尔自治区...</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge error"><i class="fa-solid fa-truck-slash"></i> 所选物流该地区停发</span>
+                                                        </td>
+                                                        <td class="action-links whitespace-nowrap">
+                                                            <a href="#">更换物流</a>
+                                                            <div class="dropdown">
+                                                                <a class="dropdown-trigger">更多 <i class="fa-solid fa-angle-down text-[10px]"></i></a>
+                                                                <div class="dropdown-menu">
+                                                                    <a href="#" class="dropdown-item">拆单发货</a>
+                                                                    <a href="#" class="dropdown-item">联系买家</a>
+                                                                    <a href="#" class="dropdown-item">挂起订单</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+
+                    <!-- 右侧：文本与交互大卡片区 -->
+                    <div class="w-full lg:w-[40%] xl:w-[35%] flex flex-col gap-6">
+                        <h2 class="text-[26px] xl:text-[32px] font-bold text-slate-800 leading-tight">
+                            精细化状态处理<br>
+                            <span class="text-[#1677FF]">成功与异常一站闭环</span>
+                        </h2>
+                        <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed mb-2">不再将所有结果混杂提示。通过分离“成功”与“异常”状态的视图面板，让商家的操作更加聚焦，极大降低履约过程中的错发与漏发风险。</p>
+
+                        <!-- 切换控件 (沉浸式大卡片风格) -->
+                        <div class="flex flex-col gap-4">
+                            <!-- 成功页卡片 -->
+                            <div id="card-fb-success" onclick="toggleFeedback('success')" class="cursor-pointer border-2 border-[#1677FF] bg-blue-50/60 rounded-2xl p-5 flex items-start gap-4 shadow-[0_4px_20px_rgba(22,119,255,0.15)] transition-all duration-300 transform scale-100 z-10">
+                                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0 shadow-sm"><i data-lucide="check-circle-2" class="w-7 h-7"></i></div>
+                                <div class="pt-0.5">
+                                    <h3 class="text-[17px] font-bold text-slate-800 mb-1.5 flex items-center gap-2">核心场景：批量发货成功</h3>
+                                    <p class="text-[13px] text-slate-600 leading-relaxed">信息降噪，提供流水号等核心数据的二次确认，并在结果页直接闭环<strong class="text-slate-700">“打印面单”</strong>等快捷操作。</p>
+                                </div>
+                            </div>
+
+                            <!-- 异常页卡片 -->
+                            <div id="card-fb-exception" onclick="toggleFeedback('exception')" class="cursor-pointer border-2 border-transparent bg-white hover:border-slate-200 hover:bg-slate-50 rounded-2xl p-5 flex items-start gap-4 shadow-sm transition-all duration-300 transform scale-[0.98] opacity-70 hover:opacity-100">
+                                <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="w-7 h-7"></i></div>
+                                <div class="pt-0.5">
+                                    <h3 class="text-[17px] font-bold text-slate-800 mb-1.5 flex items-center gap-2">核心场景：发货异常拦截</h3>
+                                    <p class="text-[13px] text-slate-600 leading-relaxed">采用局部报错，成功订单先流转。拦截订单高亮展示异常原因，并提供<strong class="text-slate-700">“修复异常”</strong>等一站式修复入口。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== Page 7: 录入提效告别机械重复 ==================== -->
+        <section class="portfolio-section" data-index="6">
             <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
                 
                 <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
@@ -498,11 +883,11 @@
                     <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-50/50">
                         <div id="img-entry-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
                             <div class="img-placeholder"></div>
-                            <img src="./image/entry-orig.png" alt="原始设计" class="w-full h-full object-contain object-top p-6 transition-transform duration-500 hover:scale-105 origin-top relative z-10" onerror="this.style.opacity='0'">
+                            <img src="./image/entry-orig.png" alt="原始设计" class="magnifiable-image w-full h-full object-contain object-top p-6 relative z-10 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                         <div id="img-entry-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
                             <div class="img-placeholder"></div>
-                            <img src="./image/entry-opt.png" alt="优化方案" class="w-full h-full object-contain object-top p-6 transition-transform duration-500 hover:scale-105 origin-top relative z-10" onerror="this.style.opacity='0'">
+                            <img src="./image/entry-opt.png" alt="优化方案" class="magnifiable-image w-full h-full object-contain object-top p-6 relative z-10 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                     </div>
 
@@ -565,188 +950,7 @@
             </div>
         </section>
 
-        <!-- ==================== Page 6: 物流模板配置可视简化 ==================== -->
-        <section class="portfolio-section" data-index="5">
-            <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
-                
-                <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
-                    <div>
-                        <div class="flex items-center gap-3 mb-1.5">
-                            <div class="w-1.5 h-8 md:h-9 bg-[#1677FF] rounded-sm"></div>
-                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">物流模板优化</h1>
-                        </div>
-                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Logistics Template Optimization & Refactoring</p>
-                    </div>
-                    <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">
-                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium">配置效率提升</span>
-                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block">耗时 -60%</span>
-                    </div>
-                </header>
-
-                <div class="flex-1 min-h-0 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 xl:gap-12 reveal delay-200">
-                    
-                    <div class="w-full lg:w-[45%] xl:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 bg-slate-50/50">
-                        <div id="img-log-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
-                            <div class="img-placeholder"></div>
-                            <img src="./image/log-orig.png" alt="原始设计" class="w-full h-full object-contain object-top p-6 transition-transform duration-500 hover:scale-105 origin-top relative z-10" onerror="this.style.opacity='0'">
-                        </div>
-                        <div id="img-log-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
-                            <div class="img-placeholder"></div>
-                            <img src="./image/log-opt.png" alt="优化方案" class="w-full h-full object-contain object-top p-6 transition-transform duration-500 hover:scale-105 origin-top relative z-10" onerror="this.style.opacity='0'">
-                        </div>
-                    </div>
-
-                    <div class="w-full lg:w-[55%] xl:w-[50%] flex flex-col relative h-full">
-                        <div class="bg-white p-1.5 rounded-xl inline-flex self-start mb-8 shadow-sm border border-slate-100 z-30 relative">
-                            <button id="btn-log-orig" onclick="toggleView('log', 'original')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold bg-slate-100 text-slate-800 shadow-sm border border-slate-100 transition-all duration-300 flex items-center relative">
-                                <span id="dot-log-orig" class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 mr-3 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>原有痛点 (Original)
-                            </button>
-                            <button id="btn-log-opt" onclick="toggleView('log', 'optimized')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent transition-all duration-300 flex items-center relative">
-                                <span id="dot-log-opt" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300 mr-3"></span>优化解法 (Optimized)
-                            </button>
-                        </div>
-
-                        <div class="flex-1 relative w-full">
-                            <!-- 痛点 -->
-                            <div id="text-log-orig" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-20 pointer-events-auto">
-                                <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-2xl xl:text-[28px] font-bold text-slate-800 mb-3">繁琐且易错的地区配置</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">旧版系统采用单选框平铺展示全国省市，不仅操作链路极长，而且极易造成运费设置的疏漏与资损。</p>
-                                </div>
-                                <div class="flex flex-col gap-4 w-full">
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-sm hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="mouse-pointer-click" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">操作极其繁琐</span><span class="text-[13px] text-slate-500 leading-relaxed">配置一个偏远地区模板，需要逐一寻找并点击对应省市，<strong class="text-red-500 font-semibold">单次配置点击数高达 30+ 次</strong>。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-sm hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="alert-circle" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">视图缺乏归纳</span><span class="text-[13px] text-slate-500 leading-relaxed">所有省份平铺展示，无法直观地查阅“哪些地区已经配置了特定运费”，排查困难。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-sm hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="shield-alert" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px]">极易造成资损</span><span class="text-[13px] text-slate-500 leading-relaxed">由于缺乏系统校验，极容易漏选偏远地区（如新疆、西藏），导致商家承担高昂的包邮运费。</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 解法 -->
-                            <div id="text-log-opt" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-10 pointer-events-none">
-                                <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-2xl xl:text-[28px] font-bold text-[#1677FF] mb-3">可视化分区与智能计费</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">通过重构信息架构，引入区域分组和表格化展示，彻底解决配置难、查错难的问题。</p>
-                                </div>
-                                <div class="flex flex-col gap-4 w-full">
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">批量分组配置 (效率 +60%)</span><span class="text-[13px] text-slate-600 leading-relaxed">引入“大区级”分组标签，支持一键勾选华东、西北等大区，操作缩减至几步。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">表格化清晰展示</span><span class="text-[13px] text-slate-600 leading-relaxed">采用表格形式精准对齐“配送区域”与“对应运费”，所见即所得。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 shadow-sm hover:bg-blue-50 transition-colors">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px]">闭环的防呆机制</span><span class="text-[13px] text-slate-600 leading-relaxed">系统自动归集未被指定的地区落入“默认运费”规则，杜绝漏选造成的资损。</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== Page 7: 智能审核规避超卖风险 ==================== -->
-        <section class="portfolio-section" data-index="6">
-            <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
-                
-                <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
-                    <div>
-                        <div class="flex items-center gap-3 mb-1.5">
-                            <div class="w-1.5 h-8 md:h-10 bg-[#1677FF] rounded-sm shadow-sm"></div>
-                            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">智能审核规避超卖风险</h1>
-                        </div>
-                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Close the Loop to Eliminate Friction</p>
-                    </div>
-                    <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-[0_4px_20px_rgba(22,119,255,0.06)]">
-                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium transition-colors group-hover:text-blue-400">处理时效提升</span>
-                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block transition-transform duration-300 group-hover:scale-105 group-hover:origin-right">审核耗时 -60%</span>
-                    </div>
-                </header>
-
-                <div class="flex-1 min-h-0 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 xl:gap-12 reveal delay-200">
-                    <!-- 左侧：图片展示区 -->
-                    <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-50/50">
-                        <div id="img-audit-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
-                            <div class="img-placeholder"></div>
-                            <img src="image/audit-original.png" alt="原始设计" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
-                        </div>
-                        <div id="img-audit-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
-                            <div class="img-placeholder"></div>
-                            <img src="image/audit-optimized.png" alt="优化方案" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
-                        </div>
-                    </div>
-
-                    <!-- 右侧：交互控制与文案区 -->
-                    <div class="w-full lg:w-[50%] flex flex-col relative h-full">
-                        <div class="bg-white p-1.5 rounded-xl inline-flex self-start mb-8 shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-slate-100 z-30 relative">
-                            <button id="btn-audit-orig" onclick="toggleView('audit', 'original')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold bg-slate-100 text-slate-800 shadow-sm border border-slate-100 transition-all duration-300 flex items-center relative">
-                                <span id="dot-audit-orig" class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 mr-3 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>原有痛点 (Original)
-                            </button>
-                            <button id="btn-audit-opt" onclick="toggleView('audit', 'optimized')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent transition-all duration-300 flex items-center relative">
-                                <span id="dot-audit-opt" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300 mr-3"></span>优化解法 (Optimized)
-                            </button>
-                        </div>
-
-                        <div class="flex-1 relative w-full">
-                            <!-- 痛点 -->
-                            <div id="text-audit-orig" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-20 pointer-events-auto">
-                                <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-[24px] xl:text-[28px] font-bold text-slate-800 mb-3">信息断层与繁琐操作</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">缺失库存数据，需人工跳转查询；操作需二次确认。</p>
-                                </div>
-                                <div class="flex flex-col gap-4 w-full">
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="search-x" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">数据可视：库存缺失需另开窗口查询</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">订单审核与商品库存数据分离，审核时需另开窗口核对库存，极易引发漏查和超卖风险。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="git-branch" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">操作效率：动作割裂需二次确认</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">审核与发货属于不同流程节点，动作割裂，不仅增加频繁的点击成本，还易造成操作遗漏。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="eye-off" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">页面重点不突出干扰决策</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">页面缺乏有效的信息层级规划与归类，真正用于决策的关键数据未能得到优先展现。</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- 解法 -->
-                            <div id="text-audit-opt" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-10 pointer-events-none">
-                                <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-[24px] xl:text-[28px] font-bold text-[#1677FF] mb-3">数据聚合与一键决策</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">审核内容干净整洁，重要信息一目了然，耗时最短。</p>
-                                </div>
-                                <div class="flex flex-col gap-4 w-full">
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="database" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">列表直显库存无需跳转</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">数据表格直接透出实时的库存状态数据，无需反复切换窗口即可完成商品库存校验，所见即所得。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">审核发货一键合并流转</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">将审核与发货操作智能合并，底部常驻“审核通过，去发货”快捷按钮，大幅缩短业务处理链路。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="focus" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">降噪去重凸显核心数据</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">重新规划界面视觉重心，卡片化收纳基础信息，剔除冗余干扰项，让审核人员以最快速度完成决策。</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== Page 8: 数据实时保障账实一致 ==================== -->
+        <!-- ==================== Page 8: 数据实时保障账实一致 (原Page 9) ==================== -->
         <section class="portfolio-section" data-index="7">
             <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
                 <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
@@ -767,11 +971,11 @@
                     <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-50/50">
                         <div id="img-inventory-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
                             <div class="img-placeholder"></div>
-                            <img src="image/inventory-original.png" alt="原始设计" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
+                            <img src="image/inventory-original.png" alt="原始设计" class="magnifiable-image w-full h-full object-contain object-top p-2 md:p-6 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                         <div id="img-inventory-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
                             <div class="img-placeholder"></div>
-                            <img src="image/inventory-optimized.png" alt="优化方案" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
+                            <img src="image/inventory-optimized.png" alt="优化方案" class="magnifiable-image w-full h-full object-contain object-top p-2 md:p-6 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                     </div>
 
@@ -832,7 +1036,7 @@
             </div>
         </section>
 
-        <!-- ==================== Page 9: 信息聚合提升响应效率 ==================== -->
+        <!-- ==================== Page 9: 信息聚合提升响应效率 (原Page 10) ==================== -->
         <section class="portfolio-section" data-index="8">
             <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
                 <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
@@ -853,11 +1057,11 @@
                     <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-50/50">
                         <div id="img-dash-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
                             <div class="img-placeholder"></div>
-                            <img src="image/dashboard-original.png" alt="原始设计" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
+                            <img src="image/dashboard-original.png" alt="原始设计" class="magnifiable-image w-full h-full object-contain object-top p-2 md:p-6 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                         <div id="img-dash-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
                             <div class="img-placeholder"></div>
-                            <img src="image/dashboard-optimized.png" alt="优化方案" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
+                            <img src="image/dashboard-optimized.png" alt="优化方案" class="magnifiable-image w-full h-full object-contain object-top p-2 md:p-6 cursor-zoom-in" onerror="this.style.opacity='0'">
                         </div>
                     </div>
 
@@ -918,92 +1122,15 @@
             </div>
         </section>
 
-        <!-- ==================== Page 10: 流程闭环消除协作内耗 ==================== -->
-        <section class="portfolio-section" data-index="9">
-            <div class="w-full h-full flex flex-col p-8 lg:p-16 relative z-10">
-                <header class="w-full max-w-[1400px] mx-auto shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 reveal delay-100">
-                    <div>
-                        <div class="flex items-center gap-3 mb-1.5">
-                            <div class="w-1.5 h-8 md:h-10 bg-[#1677FF] rounded-sm shadow-sm"></div>
-                            <h1 class="text-2xl md:text-3xl xl:text-4xl font-bold text-slate-900 tracking-tight">流程闭环消除协作内耗</h1>
-                        </div>
-                        <p class="text-sm lg:text-base text-slate-500 font-light ml-4">Close the Loop to Eliminate Friction</p>
-                    </div>
-                    <div class="flex flex-col items-end group bg-white px-5 py-2.5 rounded-xl border border-blue-100 shadow-[0_4px_20px_rgba(22,119,255,0.06)]">
-                        <span class="text-[11px] uppercase tracking-widest text-slate-400 font-medium transition-colors group-hover:text-blue-400">屏效空间提升</span>
-                        <span class="text-lg font-bold text-[#1677FF] whitespace-nowrap inline-block transition-transform duration-300 group-hover:scale-105 group-hover:origin-right">首屏释放 +40%</span>
-                    </div>
-                </header>
+    </div>
 
-                <div class="flex-1 min-h-0 w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 xl:gap-12 reveal delay-200">
-                    <div class="w-full lg:w-[50%] h-full relative rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-50/50">
-                        <div id="img-order-orig" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-100 scale-100 z-20">
-                            <div class="img-placeholder"></div>
-                            <img src="image/order-original.png" alt="原始设计" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
-                        </div>
-                        <div id="img-order-opt" class="absolute inset-0 transition-all duration-700 ease-in-out opacity-0 scale-95 z-10 pointer-events-none">
-                            <div class="img-placeholder"></div>
-                            <img src="image/order-optimized.png" alt="优化方案" class="w-full h-full object-contain object-top p-2 md:p-6 transition-transform duration-500 ease-out hover:scale-[1.15] cursor-zoom-in origin-top" onerror="this.style.opacity='0'">
-                        </div>
-                    </div>
-
-                    <div class="w-full lg:w-[50%] flex flex-col relative h-full">
-                        <div class="bg-white p-1.5 rounded-xl inline-flex self-start mb-8 shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-slate-100 z-30 relative">
-                            <button id="btn-order-orig" onclick="toggleView('order', 'original')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold bg-slate-100 text-slate-800 shadow-sm border border-slate-100 transition-all duration-300 flex items-center relative">
-                                <span id="dot-order-orig" class="inline-block w-2.5 h-2.5 rounded-full bg-red-400 mr-3 shadow-[0_0_8px_rgba(248,113,113,0.6)]"></span>原有痛点 (Original)
-                            </button>
-                            <button id="btn-order-opt" onclick="toggleView('order', 'optimized')" class="px-6 xl:px-8 py-3 rounded-lg text-[14px] xl:text-[15px] font-bold text-slate-400 hover:text-slate-600 hover:bg-slate-50 border border-transparent transition-all duration-300 flex items-center relative">
-                                <span id="dot-order-opt" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-300 mr-3"></span>优化解法 (Optimized)
-                            </button>
-                        </div>
-
-                        <div class="flex-1 relative w-full">
-                            <div id="text-order-orig" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-100 translate-y-0 z-20 pointer-events-auto">
-                                <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-[24px] xl:text-[28px] font-bold text-slate-800 mb-3">堆砌式筛选与拥挤列表</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">所有筛选条件默认平铺，占用首屏大量空间。</p>
-                                </div>
-                                <div class="flex flex-col gap-4 w-full">
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="maximize" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">首屏利用率低：筛选区平铺占屏40%</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">表单化的长条件筛选模块挤占了过多的首屏高度，导致下方核心的订单数据列表区域被严重压缩，需频繁滚动。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="search" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">筛选效率低下：单一维度下拉查找</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">缺乏组合维度的快捷入口，客服在处理高频场景（如“待发货”、“退款中”）时，每次都要在下拉框内反复翻找。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-white border border-red-100/60 shadow-[0_4px_15px_rgba(0,0,0,0.02)] hover:border-red-200 transition-colors">
-                                        <div class="p-2.5 bg-red-50 text-red-500 rounded-xl shrink-0 mt-0.5"><i data-lucide="align-justify" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-slate-700 text-[15px] xl:text-[16px]">列表信息拥挤：文字堆砌缺乏视觉重点</span><span class="text-[13px] xl:text-[14px] text-slate-500 leading-relaxed">订单内的文本信息缺乏字重和颜色区分，难以在密集的待办记录中快速聚焦并定位到关键的异常订单状态。</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="text-order-opt" class="absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 translate-y-8 z-10 pointer-events-none">
-                                <div class="mb-6 xl:mb-8">
-                                    <h2 class="text-[24px] xl:text-[28px] font-bold text-[#1677FF] mb-3">页签导航与组合筛选</h2>
-                                    <p class="text-slate-500 text-[14px] xl:text-[15px] leading-relaxed max-w-lg">采用 Tab页签 切换高频状态，低频筛选折叠，释放空间。</p>
-                                </div>
-                                <div class="flex flex-col gap-4 w-full">
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="folder" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">高频状态采用Tab页签一键切换</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">将最高频的业务流转节点（如“待付款”、“已发货”等）提取为顶部的视图 Tab，实现核心场景一键触达。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="minimize-2" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">折叠低频筛选释放空间</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">将次要维度的组合搜索条件默认收起隐藏，将首屏宝贵的视窗面积归还给重要的业务列表与订单明细展示。</span></div>
-                                    </div>
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-100 hover:bg-blue-50 transition-colors shadow-sm">
-                                        <div class="p-2.5 bg-blue-100/80 text-[#1677FF] rounded-xl shrink-0 mt-0.5"><i data-lucide="tag" class="w-5 h-5"></i></div>
-                                        <div class="flex flex-col gap-1.5"><span class="font-bold text-blue-800 text-[15px] xl:text-[16px]">关键状态标签化清晰易读</span><span class="text-[13px] xl:text-[14px] text-slate-600 leading-relaxed">重构列表视觉层级，对订单的履约及支付状态使用差异化色彩标签标定，有效减轻客服人员长期盯盘的视觉负担。</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+    <!-- 全屏图片查看器 (Lightbox) -->
+    <div id="image-lightbox" class="fixed inset-0 z-[100000] bg-slate-900/95 hidden items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <button id="lightbox-close" class="absolute top-6 right-8 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2.5 backdrop-blur transition-all duration-200 z-[100001]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <!-- 注意：移除了 magnifiable-image 类，防止放大镜在大图上触发；加入 draggable="false" 防止原生拖拽冲突 -->
+        <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl select-none transition-transform duration-100 ease-out" style="object-fit: contain; transform: translate(0px, 0px) scale(1);" src="" alt="全屏预览" draggable="false">
     </div>
 
     <!-- 交互脚本 -->
@@ -1011,7 +1138,7 @@
         // 初始化全部图标
         lucide.createIcons();
 
-        /* ================= 交互对比卡片切换逻辑 ================= */
+        /* ================= 交互对比卡片切换逻辑 (原有页面通用) ================= */
         window.toggleView = function(sectionId, view) {
             const origBtn = document.getElementById(`btn-${sectionId}-orig`);
             const optBtn = document.getElementById(`btn-${sectionId}-opt`);
@@ -1044,7 +1171,7 @@
                 origText.className = "absolute inset-0 flex flex-col transition-all duration-700 ease-in-out opacity-0 -translate-y-8 z-10 pointer-events-none";
             }
 
-            // 专门处理“导航降噪 (nav)”独有的三栏图片动画
+            // 专门处理“侧拉菜单栏 (nav)”独有的三栏图片动画
             if (sectionId === 'nav') {
                 const contOrig = document.getElementById(`cont-nav-orig`);
                 const contOpt = document.getElementById(`cont-nav-opt`);
@@ -1077,6 +1204,36 @@
                 }
             }
         };
+
+        /* ================= 发货反馈结果页切换逻辑 ================= */
+        window.toggleFeedback = function(state) {
+            const cardSuccess = document.getElementById('card-fb-success');
+            const cardException = document.getElementById('card-fb-exception');
+            const imgSuccess = document.getElementById('img-fb-success');
+            const imgException = document.getElementById('img-fb-exception');
+
+            // 定义卡片的激活和非激活样式
+            const activeClass = "cursor-pointer border-2 border-[#1677FF] bg-blue-50/60 rounded-2xl p-5 flex items-start gap-4 shadow-[0_4px_20px_rgba(22,119,255,0.15)] transition-all duration-300 transform scale-100 z-10";
+            const inactiveClass = "cursor-pointer border-2 border-transparent bg-white hover:border-slate-200 hover:bg-slate-50 rounded-2xl p-5 flex items-start gap-4 shadow-sm transition-all duration-300 transform scale-[0.98] opacity-70 hover:opacity-100";
+
+            // 基础容器样式 (注意去掉了 overflow-y-auto 保持静止)
+            const basePreviewClasses = "absolute inset-4 lg:inset-6 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden app-preview-wrap transition-all duration-700 ease-in-out origin-top flex flex-col ";
+
+            if (state === 'success') {
+                cardSuccess.className = activeClass;
+                cardException.className = inactiveClass;
+                
+                imgSuccess.className = basePreviewClasses + "p-6 lg:p-10 opacity-100 scale-100 z-20";
+                imgException.className = basePreviewClasses + "p-4 xl:p-6 opacity-0 scale-95 translate-y-4 pointer-events-none z-10";
+            } else {
+                cardSuccess.className = inactiveClass;
+                cardException.className = activeClass;
+
+                imgSuccess.className = basePreviewClasses + "p-6 lg:p-10 opacity-0 scale-95 -translate-y-4 pointer-events-none z-10";
+                imgException.className = basePreviewClasses + "p-4 xl:p-6 opacity-100 scale-100 z-20";
+            }
+        };
+
 
         /* ================= 全屏滚动及点状进度条逻辑 ================= */
         const wrapper = document.getElementById('fullpage-wrapper');
@@ -1131,18 +1288,18 @@
             });
         }
 
-        // 鼠标滚轮事件侦测
+        // 鼠标滚轮事件侦测 (如果处于放大模式则拦截)
         window.addEventListener('wheel', (e) => {
-            if (isAnimating || isDragging) return;
+            if (isAnimating || isDragging || typeof isLightboxOpen !== 'undefined' && isLightboxOpen) return;
             if (e.deltaY > 50) goToSlide(currentPage + 1);
             else if (e.deltaY < -50) goToSlide(currentPage - 1);
         });
 
-        // 触控板/移动端滑动支持
+        // 触控板/移动端滑动支持 (同样拦截大图模式)
         let touchStartY = 0;
         window.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, { passive: true });
         window.addEventListener('touchend', e => {
-            if (isAnimating || isDragging) return;
+            if (isAnimating || isDragging || typeof isLightboxOpen !== 'undefined' && isLightboxOpen) return;
             let touchEndY = e.changedTouches[0].screenY;
             if (touchStartY - touchEndY > 50) goToSlide(currentPage + 1);
             else if (touchEndY - touchStartY > 50) goToSlide(currentPage - 1);
@@ -1196,6 +1353,281 @@
         window.addEventListener('resize', () => {
             wrapper.style.transform = `translateY(-${currentPage * 100}vh)`;
             updateThumbPosition(currentPage);
+        });
+
+
+        /* ================= 全屏 Lightbox & 图片缩放拖拽逻辑 ================= */
+        const lightbox = document.getElementById('image-lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.getElementById('lightbox-close');
+
+        // 全局状态
+        let isLightboxOpen = false;
+        let currentZoom = 1;
+        
+        // 拖拽相关状态
+        let imgIsDragging = false;
+        let imgStartX = 0;
+        let imgStartY = 0;
+        let imgTranslateX = 0;
+        let imgTranslateY = 0;
+        let imgPrevTranslateX = 0;
+        let imgPrevTranslateY = 0;
+        let isMoved = false; // 用于判断是“点击”还是“拖拽”
+
+        // 更新图片的平移与缩放矩阵
+        function updateLightboxTransform() {
+            lightboxImg.style.transform = `translate(${imgTranslateX}px, ${imgTranslateY}px) scale(${currentZoom})`;
+        }
+
+        function closeLightbox() {
+            lightbox.style.opacity = '0';
+            isLightboxOpen = false;
+            
+            setTimeout(() => { 
+                lightbox.style.display = 'none'; 
+                
+                // 完全重置所有缩放和平移状态
+                currentZoom = 1;
+                imgTranslateX = 0;
+                imgTranslateY = 0;
+                imgPrevTranslateX = 0;
+                imgPrevTranslateY = 0;
+                
+                lightboxImg.style.transition = 'none';
+                updateLightboxTransform();
+                lightboxImg.style.cursor = 'zoom-in';
+            }, 300);
+        }
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            // 仅当点击背景遮罩层时关闭全屏
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        // 1. 大图按下：准备拖拽
+        lightboxImg.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // 防止触发浏览器默认的图片拖拽
+            if (currentZoom > 1) {
+                imgIsDragging = true;
+                isMoved = false;
+                imgStartX = e.clientX;
+                imgStartY = e.clientY;
+                lightboxImg.style.transition = 'none'; // 拖动时取消过渡动画，保证跟手
+                lightboxImg.style.cursor = 'grabbing';
+            }
+        });
+
+        // 2. 全局滑动：拖拽图片
+        window.addEventListener('mousemove', (e) => {
+            if (imgIsDragging) {
+                const deltaX = e.clientX - imgStartX;
+                const deltaY = e.clientY - imgStartY;
+                
+                // 只有移动超过一定的阈值才算作拖拽，以防和普通的点击混淆
+                if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+                    isMoved = true;
+                }
+                
+                imgTranslateX = imgPrevTranslateX + deltaX;
+                imgTranslateY = imgPrevTranslateY + deltaY;
+                updateLightboxTransform();
+            }
+        });
+
+        // 3. 全局松开：结束拖拽
+        window.addEventListener('mouseup', () => {
+            if (imgIsDragging) {
+                imgIsDragging = false;
+                imgPrevTranslateX = imgTranslateX;
+                imgPrevTranslateY = imgTranslateY;
+                
+                // 恢复鼠标样式和动画过渡
+                lightboxImg.style.cursor = currentZoom > 1 ? 'grab' : 'zoom-in';
+                lightboxImg.style.transition = 'transform 0.1s ease-out';
+            }
+        });
+
+        // 4. 滚轮事件：缩放图片
+        lightbox.addEventListener('wheel', (e) => {
+            if (!isLightboxOpen) return;
+            e.preventDefault(); // 阻断默认滚动
+
+            const zoomSpeed = 0.15;
+            if (e.deltaY < 0) {
+                currentZoom += zoomSpeed; // 向上滚放大
+            } else {
+                currentZoom -= zoomSpeed; // 向下滚缩小
+            }
+            
+            // 限制缩放比例 (最大放大 5 倍，最小 0.5 倍)
+            currentZoom = Math.max(0.5, Math.min(currentZoom, 5));
+
+            // 如果缩小回到了 1 倍或更小，重置平移位置回中心
+            if (currentZoom <= 1) {
+                imgTranslateX = 0;
+                imgTranslateY = 0;
+                imgPrevTranslateX = 0;
+                imgPrevTranslateY = 0;
+            }
+
+            lightboxImg.style.cursor = currentZoom > 1 ? 'grab' : 'zoom-in';
+            lightboxImg.style.transition = 'transform 0.1s ease-out';
+            updateLightboxTransform();
+        }, { passive: false });
+
+        // 5. 单击事件：快捷缩放/复原
+        lightboxImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // 如果刚刚发生过拖拽位移，则不触发单击的放大缩小
+            if (isMoved) {
+                isMoved = false; 
+                return;
+            }
+
+            if (currentZoom > 1) {
+                currentZoom = 1; // 还原
+                imgTranslateX = 0;
+                imgTranslateY = 0;
+                imgPrevTranslateX = 0;
+                imgPrevTranslateY = 0;
+                lightboxImg.style.cursor = 'zoom-in';
+            } else {
+                currentZoom = 2; // 默认双击放大2倍
+                lightboxImg.style.cursor = 'grab'; // 放大后变成可抓取的小手
+            }
+            
+            lightboxImg.style.transition = 'transform 0.3s ease-in-out';
+            updateLightboxTransform();
+        });
+
+
+        /* ================= 页面局部放大镜交互逻辑 (保留给底层图片) ================= */
+        const magSize = 360; 
+        const magZoom = 2; 
+
+        const magContainer = document.createElement('div');
+        magContainer.id = 'lens-magnifier';
+        magContainer.style.cssText = `
+            position: fixed;
+            width: ${magSize}px;
+            height: ${magSize}px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.9);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(226,232,240,0.8);
+            background-color: #f8fafc;
+            pointer-events: none;
+            z-index: 999999;
+            opacity: 0;
+            transition: opacity 0.2s ease-out, transform 0.15s ease-out;
+            transform: scale(0.9);
+            display: none;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        `;
+        
+        const magInner = document.createElement('div');
+        magInner.style.cssText = `
+            position: absolute;
+            transform-origin: 0 0;
+            will-change: transform, left, top;
+        `;
+
+        const magCloneImg = document.createElement('img');
+        magCloneImg.style.cssText = `
+            width: 100%;
+            height: 100%;
+            display: block;
+        `;
+
+        magInner.appendChild(magCloneImg);
+        magContainer.appendChild(magInner);
+        document.body.appendChild(magContainer);
+
+        // 获取带有放大镜类的图片，这批图片保留放大镜，并在点击时切入全屏大图
+        const magnifiableImages = document.querySelectorAll('img.magnifiable-image');
+
+        magnifiableImages.forEach(img => {
+            img.style.cursor = 'zoom-in'; 
+            
+            // 点击弹出大图
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightbox.style.display = 'flex';
+                isLightboxOpen = true;
+                
+                // 关闭悬浮放大镜
+                magContainer.style.opacity = '0';
+                magContainer.style.display = 'none';
+
+                void lightbox.offsetWidth;
+                lightbox.style.opacity = '1';
+            });
+
+            // 悬浮启动局部放大镜
+            img.addEventListener('mouseenter', (e) => {
+                if (isLightboxOpen) return; // 如果大图已经打开则不再启用底层放大镜
+                
+                magContainer.style.display = 'block';
+                magCloneImg.src = img.src;
+                
+                requestAnimationFrame(() => {
+                    magContainer.style.opacity = '1';
+                    magContainer.style.transform = 'scale(1)';
+                });
+            });
+
+            img.addEventListener('mousemove', (e) => {
+                if (isLightboxOpen) return;
+                
+                if (magContainer.style.display === 'none') {
+                    magContainer.style.display = 'block';
+                }
+
+                const rect = img.getBoundingClientRect();
+                const computed = window.getComputedStyle(img);
+                
+                magInner.style.width = `${rect.width}px`;
+                magInner.style.height = `${rect.height}px`;
+                magCloneImg.style.padding = computed.padding;
+                magCloneImg.style.objectFit = computed.objectFit;
+                magCloneImg.style.objectPosition = computed.objectPosition;
+                
+                magInner.style.transform = `scale(${magZoom})`;
+
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const cx = magSize / 2;
+                const cy = magSize / 2;
+
+                const tx = cx - (x * magZoom);
+                const ty = cy - (y * magZoom);
+
+                magInner.style.left = `${tx}px`;
+                magInner.style.top = `${ty}px`;
+
+                let magX = e.clientX + 24;
+                let magY = e.clientY + 24;
+
+                if (magX + magSize > window.innerWidth) magX = e.clientX - magSize - 24;
+                if (magY + magSize > window.innerHeight) magY = e.clientY - magSize - 24;
+
+                magContainer.style.left = `${magX}px`;
+                magContainer.style.top = `${magY}px`;
+            });
+
+            img.addEventListener('mouseleave', () => {
+                magContainer.style.opacity = '0';
+                magContainer.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    if (magContainer.style.opacity === '0') {
+                        magContainer.style.display = 'none';
+                    }
+                }, 200);
+            });
         });
 
         // 首次加载初始化定位
