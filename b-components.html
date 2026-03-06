@@ -73,6 +73,33 @@
         .back-btn:hover { color: #1677FF; border-color: #1677FF; background: #E6F4FF; }
         .back-btn:hover svg { transform: translateX(-3px); }
 
+        /* 顶部全局导航栏 (简约风格 B端蓝) */
+        .global-top-nav {
+            position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+            z-index: 2000; display: flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 6px; border-radius: 100px;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .global-top-nav:hover {
+            transform: translateX(-50%);
+            box-shadow: 0 6px 25px -5px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .global-top-nav .nav-item {
+            padding: 6px 18px; font-size: 13px; font-weight: 500; color: #64748B;
+            text-decoration: none; border-radius: 100px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .global-top-nav .nav-item:hover:not(.active) {
+            color: #1A1A1A; background: rgba(241, 245, 249, 0.7);
+        }
+        .global-top-nav .nav-item.active {
+            color: #FFFFFF; background: #1677FF; font-weight: 600;
+            box-shadow: 0 2px 10px rgba(22, 119, 255, 0.3);
+        }
+
         /* 回到顶部小组件 */
         .top-btn { 
             position: fixed; z-index: 1000;
@@ -128,9 +155,19 @@
 <body class="bg-[#f8fafc] text-[14px]">
 
     <!-- 全局返回键 -->
-    <a href="#" class="back-btn" onclick="history.back(); return false;" title="返回上一级">
-        <i data-lucide="chevron-left"></i>
+    <a href="index.html#page-5-expanded" class="back-btn" title="返回首页交互大屏">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6"/>
+        </svg>
     </a>
+
+    <!-- 顶部全局导航栏 (B端主题色) -->
+    <nav class="global-top-nav">
+        <a href="b-project-background.html" class="nav-item">项目背景</a>
+        <a href="b-core-process.html" class="nav-item">核心业务</a>
+        <a href="b-components.html" class="nav-item active">组件规范</a>
+        <a href="b-summary.html" class="nav-item">项目总结</a>
+    </nav>
 
     <!-- 回到顶部按钮 -->
     <button id="backToTopBtn" class="top-btn" aria-label="回到顶部">
@@ -782,18 +819,4 @@
 
     </script>
 </body>
-<!-- ... existing code ... -->
-</style>
-</head>
-<body>
-
-<!-- 全局返回键 (修改后：带锚点跳转，且使用原生SVG图标防止丢失) -->
-    <a href="index.html#page-5-expanded" class="back-btn" title="返回首页交互大屏">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m15 18-6-6 6-6"/>
-        </svg>
-    </a>
-    <!-- 右侧点状滚动进度条 -->
-    <div id="progress-nav" title="拖动或点击切换页面"></div>
-<!-- ... existing code ... -->
 </html>

@@ -6,6 +6,40 @@
     <title>开言社作品集 - 核心设计与流程</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#EFC519',
+                            black: '#1A1A1A',
+                            cream: '#FFFCF5',
+                            accent: '#DDAD65',
+                            gray: '#F5F6F8',
+                            blue: '#1677FF',
+                            dark: '#001529',
+                            bg: '#F0F2F5',
+                            text: '#1F2937',
+                            card: 'rgba(255, 255, 255, 0.7)',
+                            cardHover: 'rgba(255, 255, 255, 0.95)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 50px -10px rgba(0,0,0,0.08)',
+                        'glow': '0 0 40px rgba(239, 197, 25, 0.3)',
+                        'card-hover': '0 30px 60px -15px rgba(239, 197, 25, 0.2)',
+                        'panel': '0 25px 50px -12px rgba(0,0,0,0.15)',
+                        'card': '0 2px 8px rgba(0,0,0,0.06)',
+                        'hover': '0 10px 25px -5px rgba(22, 119, 255, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         /* ================= 全局基础样式 ================= */
         * { box-sizing: border-box; }
@@ -48,6 +82,33 @@
         }
         .progress-dot.active { height: 28px; background-color: #EFC519; }
         .progress-nav:hover .progress-dot:not(.active) { background-color: #CBD5E1; }
+
+        /* ================= 顶部全局导航栏 (简约风格) ================= */
+        .global-top-nav {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 2000; display: flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 6px; border-radius: 100px;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .global-top-nav:hover {
+            transform: translateX(-50%);
+            box-shadow: 0 6px 25px -5px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .global-top-nav .nav-item {
+            padding: 6px 18px; font-size: 13px; font-weight: 500; color: #64748B;
+            text-decoration: none; border-radius: 100px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .global-top-nav .nav-item:hover:not(.active) {
+            color: #1A1A1A; background: rgba(241, 245, 249, 0.7);
+        }
+        .global-top-nav .nav-item.active {
+            color: #1A1A1A; background: #EFC519; font-weight: 600;
+            box-shadow: 0 2px 10px rgba(239, 197, 25, 0.2);
+        }
 
         /* ================= 核心画布 ================= */
         .canvas-box {
@@ -240,6 +301,7 @@
         .home-indicator { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; background: black; border-radius: 100px; z-index: 101;}
 
         /* ================= Page 6 专属 ================= */
+        .page-6 { background-color: transparent; }
         .p6-col-problem { padding: 150px 0 40px; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
         .p6-col-process { padding: 150px 50px 40px; position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
         .p6-col-solution { padding: 150px 70px 40px; position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; }
@@ -359,12 +421,20 @@
 </head>
 <body>
 
-    <!-- 返回上一级按钮 -->
-    <a href="javascript:history.back()" class="back-btn" title="返回上一级">
+    <!-- 返回上一级按钮 (跳转至index.html第三页并自动展开四宫格面板) -->
+    <a href="index.html#page-3" class="back-btn" title="返回上一级" onclick="sessionStorage.setItem('autoExpandPortfolio', 'true');">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
     </a>
+
+    <!-- 顶部全局导航栏 -->
+    <nav class="global-top-nav">
+        <a href="project-research.html" class="nav-item">前期调研</a>
+        <a href="core-design.html" class="nav-item active">核心设计</a>
+        <a href="ui-design-system.html" class="nav-item">UI 规范</a>
+        <a href="project-review.html" class="nav-item">项目复盘</a>
+    </nav>
 
     <!-- 右侧进度条 -->
     <div class="progress-nav" id="progress-nav">
@@ -450,7 +520,7 @@
                                                         <span class="bg-[#FFF8E1] text-[#856818] px-3 py-1 rounded-full text-[10px] font-bold border border-[#F0E6C8]">Level 3</span>
                                                     </div>
                                                     <div class="w-14 h-14 bg-[#FFFDE7] rounded-2xl flex items-center justify-center mb-4 shadow-sm">
-                                                        <img src="C/13-01/image/icon_mic.png" alt="Mic" class="w-7 h-7 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/708/708811.png'">
+                                                        <img src="./image/icon_mic.png" alt="Mic" class="w-7 h-7 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/708/708811.png'">
                                                     </div>
                                                     <h3 class="text-2xl font-bold text-[#1A1A1A] mb-1">商务谈判技巧</h3>
                                                     <p class="text-base text-[#9CA3AF] mb-4">Negotiation Skills</p>
@@ -472,7 +542,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="absolute right-6 top-20 opacity-10 pointer-events-none">
-                                                        <img src="C/13-01/image/icon_quote.png" alt="Quotes" class="w-[60px] h-[60px] object-contain" onerror="this.style.display='none'">
+                                                        <img src="./image/icon_quote.png" alt="Quotes" class="w-[60px] h-[60px] object-contain" onerror="this.style.display='none'">
                                                     </div>
                                                 </div>
                                             </div>
@@ -495,10 +565,10 @@
                                         </div>
                                     </div>
                                     <div class="tab-bar">
-                                        <div class="tab-icon"><img src="C/13-01/image/nav_study.png" alt="Study" onerror="this.src='https://placehold.co/32?text=1'"></div>
-                                        <div class="tab-icon scale-110"><img src="C/13-01/image/nav_ai.png" alt="AI" onerror="this.src='https://placehold.co/32?text=2'"></div>
-                                        <div class="tab-icon"><img src="C/13-01/image/nav_community.png" alt="Social" onerror="this.src='https://placehold.co/32?text=3'"></div>
-                                        <div class="tab-icon"><img src="C/13-01/image/nav_profile.png" alt="Me" onerror="this.src='https://placehold.co/32?text=4'"></div>
+                                        <div class="tab-icon"><img src="./image/nav_study.png" alt="Study" onerror="this.src='https://placehold.co/32?text=1'"></div>
+                                        <div class="tab-icon scale-110"><img src="./image/nav_ai.png" alt="AI" onerror="this.src='https://placehold.co/32?text=2'"></div>
+                                        <div class="tab-icon"><img src="./image/nav_community.png" alt="Social" onerror="this.src='https://placehold.co/32?text=3'"></div>
+                                        <div class="tab-icon"><img src="./image/nav_profile.png" alt="Me" onerror="this.src='https://placehold.co/32?text=4'"></div>
                                     </div>
                                     <div class="home-indicator"></div>
                                 </div>
@@ -645,7 +715,7 @@
                                             <div class="flex gap-1.5 items-center"><svg width="16" height="12" viewBox="0 0 16 12" fill="black"><rect x="0" y="7" width="2" height="5"/><rect x="3" y="4" width="2" height="8"/><rect x="6" y="2" width="2" height="10"/><rect x="9" y="0" width="2" height="12"/></svg><div class="w-5 h-2.5 border border-black rounded-[2px] relative"><div class="absolute inset-0.5 bg-black w-[80%]"></div></div></div>
                                         </div>
                                         <div class="empty-state-combined">
-                                            <img src="C/13-03/image/empty_state_combined.png" alt="Empty State" onerror="this.src='https://cdn-icons-png.flaticon.com/512/7486/7486744.png'">
+                                            <img src="./image/empty_state_combined.png" alt="Empty State" onerror="this.src='https://cdn-icons-png.flaticon.com/512/7486/7486744.png'">
                                         </div>
                                         <div class="particle" style="left: 30%; top: 60%; animation-delay: 0s;"></div>
                                         <div class="particle" style="left: 70%; top: 50%; animation-delay: 1s;"></div>
@@ -838,31 +908,31 @@
 
                     <!-- Phones 加快出现速度 -->
                     <div class="phone-wrapper" style="left: 210px; top: 120px; transition-delay: 0.1s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step1.png" alt="启动页" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+1';"></div>
+                        <div class="phone-frame-small"><img src="./image/step1.png" alt="启动页" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+1';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 01</span><h4 class="desc-title">品牌启动</h4></div>
                     </div>
                     <div class="phone-wrapper" style="left: 650px; top: 120px; transition-delay: 0.2s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step2.png" alt="验证注册" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+2';"></div>
+                        <div class="phone-frame-small"><img src="./image/step2.png" alt="验证注册" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+2';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 02</span><h4 class="desc-title">极简双流注册</h4></div>
                     </div>
                     <div class="phone-wrapper" style="left: 1090px; top: 120px; transition-delay: 0.3s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step3.png" alt="学习目标" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+3';"></div>
+                        <div class="phone-frame-small"><img src="./image/step3.png" alt="学习目标" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+3';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 03</span><h4 class="desc-title">场景选择</h4></div>
                     </div>
                     <div class="phone-wrapper" style="left: 1530px; top: 120px; transition-delay: 0.4s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step4.png" alt="水平自测" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+4';"></div>
+                        <div class="phone-frame-small"><img src="./image/step4.png" alt="水平自测" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+4';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 04</span><h4 class="desc-title">语义化定级</h4></div>
                     </div>
                     <div class="phone-wrapper" style="left: 1310px; top: 600px; transition-delay: 0.5s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step5.png" alt="兴趣选择" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+5';"></div>
+                        <div class="phone-frame-small"><img src="./image/step5.png" alt="兴趣选择" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+5';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 05</span><h4 class="desc-title">个性化数据源</h4></div>
                     </div>
                     <div class="phone-wrapper" style="left: 870px; top: 600px; transition-delay: 0.6s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step6.png" alt="AI生成中" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+6';"></div>
+                        <div class="phone-frame-small"><img src="./image/step6.png" alt="AI生成中" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+6';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 06</span><h4 class="desc-title">情感化等待</h4></div>
                     </div>
                     <div class="phone-wrapper" style="left: 430px; top: 600px; transition-delay: 0.7s;">
-                        <div class="phone-frame-small"><img src="C/13-05/image/step7.png" alt="专属首页" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+7';"></div>
+                        <div class="phone-frame-small"><img src="./image/step7.png" alt="专属首页" class="screen-image" onerror="this.src='https://placehold.co/180x360/F3F4F6/9CA3AF?text=Step+7';"></div>
                         <div class="desc-card"><span class="step-badge">STEP 07</span><h4 class="desc-title">定制化首页 & 获得感</h4></div>
                     </div>
                 </div>
@@ -973,7 +1043,7 @@
                             </div>
                             <div class="relative mt-4 w-full flex items-center justify-center gap-8 p6-fade-in-up" style="animation-delay: 0.6s;">
                                 <div class="p6-phone-frame p6-phone-final relative transition-transform duration-300 hover:-translate-y-2">
-                                    <img src="C/13-06/image/final_solution_v25.png" alt="Final App Interface" class="w-full h-full object-cover bg-gray-100" onerror="this.src='https://placehold.co/560x1120/F3F4F6/1A1A1A?text=HiFi+Mockup';">
+                                    <img src="./image/final_solution_v25.png" alt="Final App Interface" class="w-full h-full object-cover bg-gray-100" onerror="this.src='https://placehold.co/560x1120/F3F4F6/1A1A1A?text=HiFi+Mockup';">
                                 </div>
                                 <div class="space-y-6">
                                     <div class="p6-annotation-box relative transition-transform duration-300 hover:scale-105" style="width: 180px; border-left: 4px solid #1A1A1A;">
@@ -1013,33 +1083,33 @@
                     <div class="p7-visual-area" id="visualArea">
                         <div class="p7-v-col">
                             <div class="p7-mockup-compare-container js-compare-item">
-                                <img src="C/13-07/image/ai_lo.png" class="p7-img-layer p7-layer-base" alt="AI Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+AI';">
+                                <img src="./image/ai_lo.png" class="p7-img-layer p7-layer-base" alt="AI Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+AI';">
                                 <div class="p7-layer-overlay">
-                                    <img src="C/13-07/image/ai_hi.png" alt="AI HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+AI';">
+                                    <img src="./image/ai_hi.png" alt="AI HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+AI';">
                                 </div>
                             </div>
                         </div>
                         <div class="p7-v-col stagger">
                             <div class="p7-mockup-compare-container js-compare-item">
-                                <img src="C/13-07/image/home_lo.jpg" class="p7-img-layer p7-layer-base" alt="Home Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+Home';">
+                                <img src="./image/home_lo.jpg" class="p7-img-layer p7-layer-base" alt="Home Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+Home';">
                                 <div class="p7-layer-overlay">
-                                    <img src="C/13-07/image/home_hi.png" alt="Home HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+Home';">
+                                    <img src="./image/home_hi.png" alt="Home HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+Home';">
                                 </div>
                             </div>
                         </div>
                         <div class="p7-v-col">
                              <div class="p7-mockup-compare-container js-compare-item">
-                                <img src="C/13-07/image/mine_lo.jpg" class="p7-img-layer p7-layer-base" alt="Mine Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+Mine';">
+                                <img src="./image/mine_lo.jpg" class="p7-img-layer p7-layer-base" alt="Mine Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+Mine';">
                                 <div class="p7-layer-overlay">
-                                    <img src="C/13-07/image/mine_hi.png" alt="Mine HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+Mine';">
+                                    <img src="./image/mine_hi.png" alt="Mine HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+Mine';">
                                 </div>
                             </div>
                         </div>
                         <div class="p7-v-col stagger">
                              <div class="p7-mockup-compare-container js-compare-item">
-                                <img src="C/13-07/image/group_lo.png" class="p7-img-layer p7-layer-base" alt="Group Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+Group';">
+                                <img src="./image/group_lo.png" class="p7-img-layer p7-layer-base" alt="Group Wireframe" onerror="this.src='https://placehold.co/375x812/F1F5F9/94A3B8?text=LowFi+Group';">
                                 <div class="p7-layer-overlay">
-                                    <img src="C/13-07/image/group_hi.png" alt="Group HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+Group';">
+                                    <img src="./image/group_hi.png" alt="Group HiFi" onerror="this.src='https://placehold.co/375x812/EFC519/FFFFFF?text=HiFi+Group';">
                                 </div>
                             </div>
                         </div>
@@ -1060,20 +1130,20 @@
                 <div class="canvas-box">
                     <div class="p8-diagonal-wrapper" id="gridContainer">
                         <div id="sourceCards" style="display: none;">
-                            <div class="phone-card-data" data-img="C/13-08/image/phone1.png" data-alt="首页"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone2.png" data-alt="连胜中心"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone3.png" data-alt="群聊"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone4.png" data-alt="消息中心"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone5.png" data-alt="评论页"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone6.png" data-alt="广场交流"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone7.png" data-alt="生词本"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone8.png" data-alt="VIP页面"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone9.png" data-alt="H5活动页"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone10.png" data-alt="轻社群"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone11.png" data-alt="广场主页"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone12.png" data-alt="人机对战"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone13.png" data-alt="课程中心"></div>
-                            <div class="phone-card-data" data-img="C/13-08/image/phone14.png" data-alt="旅行模式"></div>
+                            <div class="phone-card-data" data-img="./image/phone1.png" data-alt="首页"></div>
+                            <div class="phone-card-data" data-img="./image/phone2.png" data-alt="连胜中心"></div>
+                            <div class="phone-card-data" data-img="./image/phone3.png" data-alt="群聊"></div>
+                            <div class="phone-card-data" data-img="./image/phone4.png" data-alt="消息中心"></div>
+                            <div class="phone-card-data" data-img="./image/phone5.png" data-alt="评论页"></div>
+                            <div class="phone-card-data" data-img="./image/phone6.png" data-alt="广场交流"></div>
+                            <div class="phone-card-data" data-img="./image/phone7.png" data-alt="生词本"></div>
+                            <div class="phone-card-data" data-img="./image/phone8.png" data-alt="VIP页面"></div>
+                            <div class="phone-card-data" data-img="./image/phone9.png" data-alt="H5活动页"></div>
+                            <div class="phone-card-data" data-img="./image/phone10.png" data-alt="轻社群"></div>
+                            <div class="phone-card-data" data-img="./image/phone11.png" data-alt="广场主页"></div>
+                            <div class="phone-card-data" data-img="./image/phone12.png" data-alt="人机对战"></div>
+                            <div class="phone-card-data" data-img="./image/phone13.png" data-alt="课程中心"></div>
+                            <div class="phone-card-data" data-img="./image/phone14.png" data-alt="旅行模式"></div>
                         </div>
                     </div>
 
@@ -1466,22 +1536,6 @@
             updateScan(0); 
             updateSectionStates(currentSectionIndex, true);
         });
-
     </script>
-<!-- ... existing code ... -->
-    </style>
-</head>
-<body>
-
-    <!-- 返回上一级按钮 (跳转至index.html第三页并自动展开四宫格面板) -->
-    <a href="index.html#page-3" class="back-btn" title="返回上一级" onclick="sessionStorage.setItem('autoExpandPortfolio', 'true');">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-    </a>
-
-    <!-- 右侧进度条 -->
-    <div class="progress-nav" id="progress-nav">
-<!-- ... existing code ... -->
 </body>
 </html>

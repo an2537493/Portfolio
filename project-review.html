@@ -86,12 +86,13 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.8s ease-out forwards; }
 
+        /* ================= 悬浮按钮与全局导航 ================= */
         /* 返回上一级按钮 */ 
         .back-btn { 
             position: fixed; 
             top: 40px; 
             left: 40px; 
-            z-index: 1000; 
+            z-index: 2000; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -119,16 +120,51 @@
         .back-btn:hover svg { 
             transform: translateX(-3px); 
         }
+
+        /* 顶部全局导航栏 (简约风格) */
+        .global-top-nav {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 2000; display: flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 6px; border-radius: 100px;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .global-top-nav:hover {
+            transform: translateX(-50%);
+            box-shadow: 0 6px 25px -5px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .global-top-nav .nav-item {
+            padding: 6px 18px; font-size: 13px; font-weight: 500; color: #64748B;
+            text-decoration: none; border-radius: 100px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .global-top-nav .nav-item:hover:not(.active) {
+            color: #1A1A1A; background: rgba(241, 245, 249, 0.7);
+        }
+        .global-top-nav .nav-item.active {
+            color: #1A1A1A; background: #EFC519; font-weight: 600;
+            box-shadow: 0 2px 10px rgba(239, 197, 25, 0.2);
+        }
     </style>
 </head>
 <body>
 
-    <!-- 返回上一级按钮 -->
-    <a href="javascript:history.back()" class="back-btn" title="返回上一级">
+    <!-- 返回上一级按钮 (跳转至index.html第三页并自动展开四宫格面板) -->
+    <a href="index.html#page-3" class="back-btn" title="返回上一级" onclick="sessionStorage.setItem('autoExpandPortfolio', 'true');">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
     </a>
+
+    <!-- 顶部全局导航栏 -->
+    <nav class="global-top-nav">
+        <a href="project-research.html" class="nav-item">前期调研</a>
+        <a href="core-design.html" class="nav-item">核心设计</a>
+        <a href="ui-design-system.html" class="nav-item">UI 规范</a>
+        <a href="project-review.html" class="nav-item active">项目复盘</a>
+    </nav>
 
     <!-- Canvas Container with Padding -->
     <div class="canvas pt-[80px] pl-[100px] pr-[100px] pb-[80px] flex flex-col" id="designCanvas">
@@ -384,20 +420,5 @@
         window.addEventListener('resize', scaleCanvas);
         scaleCanvas();
     </script>
-<!-- ... existing code ... -->
-    </style>
-</head>
-<body>
-
-    <!-- 返回上一级按钮 (跳转至index.html第三页并自动展开四宫格面板) -->
-    <a href="index.html#page-3" class="back-btn" title="返回上一级" onclick="sessionStorage.setItem('autoExpandPortfolio', 'true');">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-        </svg>
-    </a>
-
-    <!-- 右侧进度条 -->
-    <div class="progress-nav" id="progress-nav">
-<!-- ... existing code ... -->
 </body>
 </html>

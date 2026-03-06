@@ -312,10 +312,10 @@
         <!-- ================= 第1页: 封面 ================= -->
         <section class="section section-1" id="page-1">
             <div class="page-container" id="scale-board">
-                <div class="blur-layer absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#EFC519] rounded-full opacity-30 pointer-events-none z-0 animate-fade-in delay-500" style="width: 57vw; height: 55vh; filter: blur(100px);"></div>
-                <div class="absolute inset-0 pointer-events-none z-0 interactive-layer" data-speed="60">
-                    <div class="blur-layer absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FDE047] rounded-full opacity-50 animate-fade-in delay-700" style="width: 31vw; height: 27vh; filter: blur(70px);"></div>
-                </div>
+                <!-- 调整渐变光晕：透明度大幅调低，取消跟随鼠标偏移，确保绝对居中 -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75vw] h-[55vh] bg-[#EFC519] rounded-[100%] opacity-[0.08] pointer-events-none z-0 animate-fade-in delay-500" style="filter: blur(100px);"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[35vw] h-[25vh] bg-[#FDE047] rounded-[100%] opacity-[0.12] pointer-events-none z-0 animate-fade-in delay-700" style="filter: blur(80px);"></div>
+                
                 <svg class="absolute inset-0 w-full h-full z-10 pointer-events-none animate-fade-in delay-700">
                     <g opacity="0.1" stroke="#1A1A1A" stroke-width="1">
                         <line x1="8.33%" y1="0" x2="8.33%" y2="100%" />
@@ -338,11 +338,12 @@
                     <div class="w-full h-full border-[1.5px] border-[#1A1A1A] opacity-30"></div>
                 </div>
                 <main class="absolute inset-0 w-full h-full flex flex-col items-center justify-center z-20 text-center select-none pointer-events-none">
-                    <div id="tilt-title" class="interactive-layer font-serif-elegant text-[#1A1A1A] flex flex-col items-center mt-2">
-                        <span class="text-[clamp(40px,6vw,100px)] tracking-[0.15em] leading-none mb-6 ml-[0.15em] animate-fade-up delay-100">
+                    <!-- 调整居中：去除 mt-2 改用 justify-center，将 ml 改为 pl 以完美抵消字间距带来的偏移 -->
+                    <div id="tilt-title" class="interactive-layer font-serif-elegant text-[#1A1A1A] flex flex-col items-center justify-center">
+                        <span class="text-[clamp(40px,6vw,100px)] tracking-[0.15em] leading-none mb-6 pl-[0.15em] animate-fade-up delay-100">
                             UIUX DESIGN
                         </span>
-                        <span class="text-[clamp(50px,8vw,130px)] font-medium tracking-[0.2em] leading-none ml-[0.2em] animate-fade-up delay-300">
+                        <span class="text-[clamp(50px,8vw,130px)] font-medium tracking-[0.2em] leading-none pl-[0.2em] animate-fade-up delay-300">
                             PORTFOLIO
                         </span>
                     </div>
@@ -463,10 +464,13 @@
                                 <div class="w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></div> LIVE INTERACTION
                             </div>
                             <h1 class="text-5xl lg:text-6xl font-black leading-[1.15] mb-6 text-brand-black tracking-tight">全真场景化<br>口语实战训练</h1>
-                            <p class="text-gray-500 text-base font-medium leading-relaxed mb-12 flex items-center gap-2">
+                            <p class="text-gray-500 text-base font-medium leading-relaxed mb-6 flex items-center gap-2">
                                 请点击右侧手机界面底部的“模拟回复”按钮进行体验
                                 <i class="fa-solid fa-arrow-right-long text-brand-yellow text-lg animate-[pulse-x_1.5s_infinite]"></i> 
                             </p>
+                            <button id="skip-demo-btn-3" class="text-sm font-medium text-gray-400 hover:text-brand-yellow transition-colors underline underline-offset-4 flex items-center gap-1 cursor-pointer w-max">
+                                点击跳过交互 <i class="fa-solid fa-forward-step text-xs"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -509,30 +513,59 @@
 
                     <div id="portfolio-panel-3" class="w-0 max-w-0 shrink-0 opacity-0 transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] overflow-hidden">
                         <div class="w-[750px] flex flex-col justify-center h-full max-h-[85vh]">
-                            <div class="overflow-y-auto custom-scroll pr-6 pb-4">
-                                <h2 class="text-4xl font-black mb-3 text-brand-black">体验完成！</h2>
-                                <p class="text-gray-500 text-base mb-8">这是开言社项目全链路体验的冰山一角。您还可以继续探索：</p>
-                                <div class="grid grid-cols-2 gap-5 w-full">
-                                    <a href="./project-research.html" class="block bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1.5 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
-                                        <h3 class="font-bold text-base mb-1.5 text-brand-black">项目前期调研</h3><p class="text-xs text-gray-400 leading-relaxed">基于定量问卷与定性访谈，深度挖掘用户在“哑巴英语”背后的真实痛点与核心学习诉求。</p>
+                            <div class="overflow-y-auto custom-scroll pr-6 pb-2">
+                                <h2 class="text-3xl font-black mb-2 text-brand-black">体验完成！</h2>
+                                <p class="text-gray-500 text-sm mb-5">这是开言社项目全链路体验的冰山一角。您还可以继续探索：</p>
+                                <div class="grid grid-cols-2 gap-4 w-full">
+                                    <a href="./project-research.html" class="flex flex-col h-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                                        <h3 class="font-bold text-[15px] mb-1.5 text-brand-black">项目前期调研</h3>
+                                        <p class="text-xs text-gray-400 leading-relaxed flex-1">基于定量问卷与定性访谈，深度挖掘用户在“哑巴英语”背后的真实痛点与核心学习诉求。</p>
+                                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[11px] font-bold text-gray-400 group-hover:text-brand-black transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-yellow group-hover:text-brand-black text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
-                                    <a href="./core-design.html" class="block bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1.5 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-pen-ruler"></i></div>
-                                        <h3 class="font-bold text-base mb-1.5 text-brand-black">核心界面设计与方案推演</h3><p class="text-xs text-gray-400 leading-relaxed">聚焦口语实战闭环，通过交互原型与场景推演，打造沉浸式且无压力的实战对话体验。</p>
+                                    <a href="./core-design.html" class="flex flex-col h-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-pen-ruler"></i></div>
+                                        <h3 class="font-bold text-[15px] mb-1.5 text-brand-black">核心界面设计与方案推演</h3>
+                                        <p class="text-xs text-gray-400 leading-relaxed flex-1">聚焦口语实战闭环，通过交互原型与场景推演，打造沉浸式且无压力的实战对话体验。</p>
+                                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[11px] font-bold text-gray-400 group-hover:text-brand-black transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-yellow group-hover:text-brand-black text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
-                                    <a href="./ui-design-system.html" class="block bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1.5 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-swatchbook"></i></div>
-                                        <h3 class="font-bold text-base mb-1.5 text-brand-black">UI设计规范</h3><p class="text-xs text-gray-400 leading-relaxed">建立高保真组件库与IP“可可”表情规范，高对比度色彩体系完全符合 WCAG 2.1 AA 标准。</p>
+                                    <a href="./ui-design-system.html" class="flex flex-col h-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-10 h-10 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-swatchbook"></i></div>
+                                        <h3 class="font-bold text-[15px] mb-1.5 text-brand-black">UI设计规范</h3>
+                                        <p class="text-xs text-gray-400 leading-relaxed flex-1">建立高保真组件库与IP“可可”表情规范，高对比度色彩体系完全符合 WCAG 2.1 AA 标准。</p>
+                                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[11px] font-bold text-gray-400 group-hover:text-brand-black transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-yellow group-hover:text-brand-black text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
-                                    <a href="./project-review.html" class="block bg-white p-5 rounded-3xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1.5 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-chart-line"></i></div>
-                                        <h3 class="font-bold text-base mb-1.5 text-brand-black">项目复盘总结</h3><p class="text-xs text-gray-400 leading-relaxed">建立优化前后的直观参照系，用真实数据量化体验升级带来的商业价值与次日留存提升。</p>
+                                    <a href="./project-review.html" class="flex flex-col h-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-card-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-lg"><i class="fa-solid fa-chart-line"></i></div>
+                                        <h3 class="font-bold text-[15px] mb-1.5 text-brand-black">项目复盘总结</h3>
+                                        <p class="text-xs text-gray-400 leading-relaxed flex-1">建立优化前后的直观参照系，用真实数据量化体验升级带来的商业价值与次日留存提升。</p>
+                                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[11px] font-bold text-gray-400 group-hover:text-brand-black transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-yellow group-hover:text-brand-black text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
                                 </div>
-                                <div class="mt-8 flex gap-4">
-                                    <button class="bg-brand-black text-brand-yellow px-8 py-3.5 rounded-full text-sm font-bold shadow-lg hover:bg-gray-800 transition-colors flex items-center gap-2">查看完整作品集 <i class="fa-solid fa-arrow-right"></i></button>
-                                    <button id="reset-demo-btn-3" class="px-6 py-3.5 rounded-full text-sm font-bold text-gray-500 hover:text-brand-black hover:bg-white shadow-sm border border-gray-200 transition-all flex items-center gap-2"><i class="fa-solid fa-rotate-left"></i> 重新体验交互</button>
+                                <div class="mt-5 flex justify-center">
+                                    <button id="reset-demo-btn-3" class="text-xs text-gray-400 hover:text-brand-black transition-colors underline underline-offset-4 flex items-center gap-1 cursor-pointer">
+                                        <i class="fa-solid fa-rotate-left"></i> 重新体验交互
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -545,7 +578,7 @@
         <!-- ================= 第4页: 视觉画廊 ================= -->
         <section class="section section-4" id="page-4">
             <div class="gallery-container">
-                <a href="logo.html" class="panel group block text-left">
+                <a href="./logo.html" class="panel group block text-left">
                     <div class="panel-inner">
                         <div class="absolute inset-0 bg-panel-5 flex items-center justify-center transition-transform duration-1000 ease-out group-hover:scale-105">
                             <img src="./image/gallery-logo-bg.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
@@ -560,7 +593,7 @@
                     </div>
                 </a>
 
-                <a href="ip-design.html" class="panel group block text-left">
+                <a href="./ip-design.html" class="panel group block text-left">
                     <div class="panel-inner">
                         <div class="absolute inset-0 bg-panel-3 flex items-center justify-center transition-transform duration-1000 ease-out group-hover:scale-105">
                             <img src="./image/gallery-3d-coco.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
@@ -575,7 +608,7 @@
                     </div>
                 </a>
 
-                <a href="illustration.html" class="panel group block text-left">
+                <a href="./illustration.html" class="panel group block text-left">
                     <div class="panel-inner">
                         <div class="absolute inset-0 bg-panel-1 flex items-center justify-center transition-transform duration-1000 ease-out group-hover:scale-105">
                             <img src="./image/gallery-illustration.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" />
@@ -613,6 +646,9 @@
                                 请点击右侧看板的「运行数据分析」进行体验
                                 <i class="fa-solid fa-arrow-right-long text-lg animate-[pulse-x_1.5s_infinite]"></i> 
                             </p>
+                            <button id="skip-demo-btn-5" class="text-sm font-medium text-gray-400 hover:text-brand-blue transition-colors underline underline-offset-4 flex items-center gap-1 mt-4 cursor-pointer w-max">
+                                点击跳过交互 <i class="fa-solid fa-forward-step text-xs"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -713,36 +749,61 @@
                     <div id="portfolio-panel-5" class="w-0 max-w-0 shrink-0 opacity-0 transition-all duration-[900ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] overflow-hidden">
                         <div class="w-[500px] flex flex-col justify-center h-full max-h-[85vh]">
                             <div class="overflow-y-auto custom-scroll pr-4 pb-2">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 border border-green-100 rounded-md text-xs font-bold mb-4 w-max"><i class="fa-solid fa-check-circle"></i> 分析报告已生成</div>
-                                <h2 class="text-3xl font-black mb-3 text-gray-900">设计交付与价值验证</h2>
-                                <p class="text-gray-500 text-sm mb-6 leading-relaxed">建立从“需求剖析”到“上线验证”的标准化工作流，用真实数据量化设计带来的商业价值。</p>
+                                <div class="inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 border border-green-100 rounded-md text-[10px] font-bold mb-3 w-max"><i class="fa-solid fa-check-circle"></i> 分析报告已生成</div>
+                                <h2 class="text-2xl font-black mb-2 text-gray-900">设计交付与价值验证</h2>
+                                <p class="text-gray-500 text-xs mb-4 leading-relaxed">建立从“需求剖析”到“上线验证”的标准化工作流，用真实数据量化设计带来的商业价值。</p>
                                 
-                                <div class="grid grid-cols-2 gap-4 w-full">
-                                    <a href="./b-project-background.html#page-5-expanded" class="block bg-white p-4 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-blue-50 text-brand-blue rounded-lg flex items-center justify-center mb-3 group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-bullseye text-lg"></i></div>
-                                        <h3 class="font-bold text-gray-800 text-sm mb-1">项目背景</h3>
-                                        <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">深入剖析B端电商痛点，明确业务重构方向与核心诉求。</p>
+                                <div class="grid grid-cols-2 gap-3 w-full">
+                                    <a href="./b-project-background.html#page-5-expanded" class="flex flex-col h-full bg-white p-3.5 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-9 h-9 bg-blue-50 text-brand-blue rounded-lg flex items-center justify-center mb-2 group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-bullseye text-base"></i></div>
+                                        <h3 class="font-bold text-gray-800 text-[13px] mb-1">项目背景</h3>
+                                        <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-2 flex-1">深入剖析B端电商痛点，明确业务重构方向与核心诉求。</p>
+                                        <div class="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-brand-blue transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
-                                    <a href="./b-core-process.html#page-5-expanded" class="block bg-white p-4 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center mb-3 group-hover:bg-indigo-500 group-hover:text-white transition-colors"><i class="fa-solid fa-code-branch text-lg"></i></div>
-                                        <h3 class="font-bold text-gray-800 text-sm mb-1">核心业务优化流程</h3>
-                                        <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">重塑商品管理与对账闭环，打通数据孤岛消除操作冗余。</p>
+                                    <a href="./b-core-process.html#page-5-expanded" class="flex flex-col h-full bg-white p-3.5 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-9 h-9 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center mb-2 group-hover:bg-indigo-500 group-hover:text-white transition-colors"><i class="fa-solid fa-code-branch text-base"></i></div>
+                                        <h3 class="font-bold text-gray-800 text-[13px] mb-1">核心业务优化流程</h3>
+                                        <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-2 flex-1">重塑商品管理与对账闭环，打通数据孤岛消除操作冗余。</p>
+                                        <div class="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-brand-blue transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
-                                    <a href="./b-components.html#page-5-expanded" class="block bg-white p-4 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-teal-50 text-teal-500 rounded-lg flex items-center justify-center mb-3 group-hover:bg-teal-500 group-hover:text-white transition-colors"><i class="fa-solid fa-layer-group text-lg"></i></div>
-                                        <h3 class="font-bold text-gray-800 text-sm mb-1">组件规范</h3>
-                                        <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">建立全局一致的底层 Theme Token 及高频录入组件库。</p>
+                                    <a href="./b-components.html#page-5-expanded" class="flex flex-col h-full bg-white p-3.5 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-9 h-9 bg-teal-50 text-teal-500 rounded-lg flex items-center justify-center mb-2 group-hover:bg-teal-500 group-hover:text-white transition-colors"><i class="fa-solid fa-layer-group text-base"></i></div>
+                                        <h3 class="font-bold text-gray-800 text-[13px] mb-1">组件规范</h3>
+                                        <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-2 flex-1">建立全局一致的底层 Theme Token 及高频录入组件库。</p>
+                                        <div class="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-brand-blue transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
-                                    <a href="./b-summary.html#page-5-expanded" class="block bg-white p-4 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
-                                        <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-lg flex items-center justify-center mb-3 group-hover:bg-purple-500 group-hover:text-white transition-colors"><i class="fa-solid fa-chart-pie text-lg"></i></div>
-                                        <h3 class="font-bold text-gray-800 text-sm mb-1">总结</h3>
-                                        <p class="text-xs text-gray-500 leading-relaxed line-clamp-2">复盘全量上线数据，验证体验升级带来的真实商业价值。</p>
+                                    <a href="./b-summary.html#page-5-expanded" class="flex flex-col h-full bg-white p-3.5 rounded-xl shadow-card border border-gray-100 hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer group text-left outline-none decoration-transparent">
+                                        <div class="w-9 h-9 bg-purple-50 text-purple-500 rounded-lg flex items-center justify-center mb-2 group-hover:bg-purple-500 group-hover:text-white transition-colors"><i class="fa-solid fa-chart-pie text-base"></i></div>
+                                        <h3 class="font-bold text-gray-800 text-[13px] mb-1">总结</h3>
+                                        <p class="text-[11px] text-gray-500 leading-relaxed line-clamp-2 flex-1">复盘全量上线数据，验证体验升级带来的真实商业价值。</p>
+                                        <div class="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between">
+                                            <span class="text-[10px] font-bold text-gray-400 group-hover:text-brand-blue transition-colors tracking-widest">点击进入板块</span>
+                                            <div class="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white text-gray-400 transition-all group-hover:scale-110">
+                                                <i class="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
+                                            </div>
+                                        </div>
                                     </a>
                                 </div>
 
-                                <div class="mt-6 flex gap-4">
-                                    <button class="bg-brand-blue text-white px-6 py-3 rounded-md text-sm font-bold shadow-md hover:bg-blue-600 transition-colors flex items-center gap-2">查看 B端完整作品集 <i class="fa-solid fa-arrow-right"></i></button>
-                                    <button id="reset-demo-btn-5" class="px-5 py-3 rounded-md text-sm font-bold text-gray-500 hover:text-gray-800 bg-white shadow-sm border border-gray-200 transition-all flex items-center gap-2"><i class="fa-solid fa-rotate-left"></i> 重置演示</button>
+                                <div class="mt-5 flex justify-center">
+                                    <button id="reset-demo-btn-5" class="text-xs text-gray-400 hover:text-brand-blue transition-colors underline underline-offset-4 flex items-center gap-1 cursor-pointer">
+                                        <i class="fa-solid fa-rotate-left"></i> 重新体验交互
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1033,6 +1094,7 @@
             const introPanel = document.getElementById('intro-panel-3');
             const portfolioPanel = document.getElementById('portfolio-panel-3');
             const resetDemoBtn = document.getElementById('reset-demo-btn-3');
+            const skipDemoBtn = document.getElementById('skip-demo-btn-3');
             let chatStep = 0;
             const script = [
                 { user: "Hi, I want to check my bag.", ai: "Sure, I can help you with that. Could you please place your luggage on the scale? Do you have any fragile items or electronics inside?", btnText: "<i class='fa-solid fa-microphone'></i> 模拟回复: No, I don't." },
@@ -1061,7 +1123,9 @@
                     demoBtn.disabled = false;
                 }, 400); 
             }
+            
             resetDemoBtn.addEventListener('click', resetLayout);
+            skipDemoBtn.addEventListener('click', expandPortfolio);
 
             demoBtn.addEventListener('click', () => {
                 if (chatStep >= script.length) { expandPortfolio(); return; }
@@ -1124,6 +1188,7 @@
             const introPanel = document.getElementById('intro-panel-5');
             const portfolioPanel = document.getElementById('portfolio-panel-5');
             const resetDemoBtn = document.getElementById('reset-demo-btn-5');
+            const skipDemoBtn = document.getElementById('skip-demo-btn-5');
             let isCompleted = false;
 
             function animateValue(obj, start, end, duration, suffix = "") {
@@ -1159,6 +1224,25 @@
             }
 
             resetDemoBtn.addEventListener('click', resetLayout);
+
+            skipDemoBtn.addEventListener('click', () => {
+                if (isCompleted) return;
+                isCompleted = true;
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                chartSkeleton.classList.add('hidden'); realChart.classList.remove('hidden');
+                counters.forEach(counter => {
+                    const target = counter.getAttribute('data-target');
+                    const suffix = counter.getAttribute('data-suffix');
+                    counter.innerHTML = target + suffix;
+                });
+                if (lineDraw) lineDraw.classList.add('active');
+                areaFades.forEach(el => el.classList.add('active'));
+                demoBtn.innerHTML = '报告生成完毕 <i class="fa-solid fa-arrow-right text-xs"></i>';
+                demoBtn.classList.remove('opacity-80', 'bg-brand-blue', 'hover:bg-blue-600');
+                demoBtn.classList.add('bg-green-600', 'hover:bg-green-700'); 
+                demoBtn.disabled = false;
+                expandPortfolio();
+            });
 
             demoBtn.addEventListener('click', () => {
                 if (isCompleted) { expandPortfolio(); return; }

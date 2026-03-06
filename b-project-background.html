@@ -69,6 +69,33 @@
             .back-btn svg { width: 18px; height: 18px; }
         }
 
+        /* 顶部全局导航栏 (简约风格 B端蓝) */
+        .global-top-nav {
+            position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+            z-index: 2000; display: flex; align-items: center; gap: 4px;
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 6px; border-radius: 100px;
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .global-top-nav:hover {
+            transform: translateX(-50%);
+            box-shadow: 0 6px 25px -5px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .global-top-nav .nav-item {
+            padding: 6px 18px; font-size: 13px; font-weight: 500; color: #64748B;
+            text-decoration: none; border-radius: 100px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .global-top-nav .nav-item:hover:not(.active) {
+            color: #1A1A1A; background: rgba(241, 245, 249, 0.7);
+        }
+        .global-top-nav .nav-item.active {
+            color: #FFFFFF; background: #1677FF; font-weight: 600;
+            box-shadow: 0 2px 10px rgba(22, 119, 255, 0.3);
+        }
+
         /* ---------------- 全屏滚动容器 ---------------- */
         #fullpage-wrapper {
             width: 100vw;
@@ -287,6 +314,14 @@
     <a href="index.html#page-5-expanded" class="back-btn" title="返回首页交互大屏">
         <i data-lucide="chevron-left"></i>
     </a>
+
+    <!-- 顶部全局导航栏 (B端主题色) -->
+    <nav class="global-top-nav">
+        <a href="b-project-background.html" class="nav-item active">项目背景</a>
+        <a href="b-core-process.html" class="nav-item">核心业务</a>
+        <a href="b-components.html" class="nav-item">组件规范</a>
+        <a href="b-summary.html" class="nav-item">项目总结</a>
+    </nav>
 
     <!-- 右侧点状滚动进度条 -->
     <div id="progress-nav" title="拖动或点击切换页面">
